@@ -1,0 +1,46 @@
+.sidebar-sentora {
+    background-color: #1a1a1a; /* Fondo casi negro */
+    color: #999; /* Texto gris suave */
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar-sentora .brand {
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.sidebar-sentora .section-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+}
+
+.sidebar-sentora .nav-link {
+    color: #888;
+    padding: 5px 10px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.sidebar-sentora .nav-link:hover {
+    color: #ffffff;
+}
+
+.sidebar-sentora .nav-link i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    opacity: 0.7;
+}

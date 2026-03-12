@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* ========== ANIMACIONES ========== */
+    .card-hover { 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+    .card-hover:hover { 
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(239, 68, 68, 0.15);
+    }
+    
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-in-left { animation: slideInLeft 0.5s ease-out; }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .pulse-dot { 
+      animation: pulse 2s infinite; 
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+    }
+    
+    .sidebar-item { 
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .sidebar-item:hover { 
+      padding-left: 1.5rem;
+      background: rgba(30, 41, 59, 0.5);
+    }
+    
+    /* Modo claro - sidebar item */
+    body.light-theme .sidebar-item:hover {
+      background: rgba(226, 232, 240, 0.5);
+    }
+    
+    .toast { animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    /* ========== BARRA DE DESPLAZAMIENTO PERSONALIZADA ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.5);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.7);
+    }
+    
+    /* ========== ANIMACIONES DE BADGES ========== */
+    .badge-pulse {
+      animation: badgePulse 2s infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    /* ========== EFECTOS DE ÍCONOS Y BOTONES ========== */
+    .icon-btn {
+      transition: all 0.3s ease;
+    }
+    .icon-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    /* ========== MODAL Y BACKDROP ========== */
+    .modal-backdrop {
+      animation: backdropFade 0.3s ease-out;
+    }
+    @keyframes backdropFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* ========== BARRAS DE PROGRESO ========== */
+    .progress-fill {
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* ========== TARJETAS DE ESTADÍSTICAS ========== */
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    }
+    
+    /* Modo claro - borde de tarjeta */
+    body.light-theme .stat-card::before {
+      background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.05), transparent);
+    }
+    
+    /* ========== ENTRADAS DE FORMULARIOS ========== */
+    input, textarea, select {
+      transition: all 0.3s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.1);
+    }
+    
+    /* ========== SELECCIÓN DE TEXTO ========== */
+    ::selection {
+      background: rgba(239, 68, 68, 0.3);
+      color: inherit;
+    }
+
+    /* ========== TEMA CLARO ========== */
+    body.light-theme {
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script><!-- Firebase SDK - Bibliotecas necesarias para conectar con Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set, push, update, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+    // Configuración de Firebase - Reemplaza con tus credenciales reales
+    const firebaseConfig = {
+      apiKey: "AIzaSyDzN5xN5xN5xN5xN5xN5xN5xN5xN5xN5xN5x",
+      authDomain: "tu-proyecto.firebaseapp.com",
+      databaseURL: "https://tu-proyecto.firebaseio.com",
+      projectId: "tu-proyecto",
+      storageBucket: "tu-proyecto.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef1234567890"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Exponer Firebase globalmente para que el resto del código pueda acceder
+    window.firebase = { database, ref, onValue, set, push, update, remove };
+  </script>
+ </head>
+ <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
+  <!-- ========== PANTALLA DE LOGIN ========== --> 
+  <!-- Esta es la primera pantalla que ve el usuario, aquí inicia sesión -->
+  <div id="login-screen" class="h-full w-full flex items-center justify-center p-4">
+   <div class="w-full max-w-md"><!-- Logo y Título -->
+    <div class="text-center mb-8">
+     <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center">
+      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+      </svg>
+     </div>
+     <h1 class="text-3xl font-bold text-white mb-2">Sistema de Sugerencias</h1>
+     <p class="text-slate-400">Inicia sesión en tu cuenta</p>
+    </div><!-- Formulario de Login -->
+    <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-6"><!-- Selector de Rol (Admin/Representante) -->
+     <div class="flex gap-3 mb-6">
+      <button onclick="cambiarRolLogin('admin')" id="btn-rol-admin" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-red-500 text-white">
+       <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+       </svg> Administrador </button> 
+
+       <button onclick="cambiarRolLogin('representante')" id="btn-rol-rep" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-slate-700/50 text-slate-300 hover:bg-slate-700">
+       <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
+       </svg> Representante </button>
+     </div><!-- Sección de Login para Administrador -->
+     <div id="login-admin-section" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> 
+        <input type="email" id="login-admin-email" placeholder="admin@ejemplo.com" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
+        <input type="password" id="login-admin-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
+      </div>
+      <button onclick="loginAdministrador()" class="w-full py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+       </svg> Iniciar Sesión </button>
+      <p class="text-xs text-slate-500 text-center mt-4">Demo: admin / 123</p>
+     </div><!-- Sección de Login para Representante -->
+     <div id="login-representante-section" class="hidden space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> 
+        <input type="text" id="login-rep-usuario" placeholder="tu.usuario" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
+        <input type="password" id="login-rep-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
+      </div>
+      <button onclick="loginRepresentante()" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+       </svg> Iniciar Sesión </button>
+      <p class="text-xs text-slate-500 text-center mt-4">Contacta a tu administrador si no tienes usuario</p>
+     </div>
+    </div><!-- Footer -->
+    <div class="text-center mt-8 text-slate-500 text-sm">
+     <p>© 2024 Sistema de Sugerencias. Todos los derechos reservados.</p>
+    </div>
+   </div>
+  </div>
+  <script>
+
+    // ========== VARIABLES GLOBALES ==========
+    // Arrays para almacenar datos de sugerencias y representantes
+    let todasLasSugerencias = [];
+    let representantes = [];
+    let temaActual = 'dark';
+    
+    // Información del administrador actual
+    let adminActual = { nombre: 'Administrador', iniciales: 'AD', contraseña: 'admin123' };
+    
+    // ========== INFORMACIÓN DEL USUARIO AUTENTICADO ==========
+    // Esta variable almacena los datos del usuario que ha iniciado sesión
+    let usuarioAutenticado = null;
+    let rolAutenticado = null;
+
+    // ========== REFERENCIAS DE FIREBASE ==========
+    // Estas referencias apuntan a las colecciones en la base de datos Firebase
+    let referenciasSugerencias;
+    let referenciasRepresentantes;
+    let referenciaAdmin;
+
+    // ========== PALETAS DE COLORES PARA TEMAS ==========
+    // Paleta de colores para el tema claro
+    const temaPalido = {
+      fondo: '#f8fafc',
+      barraLateral: '#f1f5f9',
+      tarjeta: '#ffffff',
+      texto: '#0f172a',
+      textoSecundario: '#64748b',
+      borde: '#e2e8f0'
+    };
+
+    // Paleta de colores para el tema oscuro (predeterminado)
+    const temaOscuro = {
+      fondo: '#0f172a',
+      barraLateral: '#1e293b',
+      tarjeta: '#1e293b',
+      texto: '#f1f5f9',
+      textoSecundario: '#cbd5e1',
+      borde: '#334155'
+    };
+
+    // ========== CONEXIÓN CON FIREBASE ==========
+    // Esta función establece la conexión con Firebase y carga los datos
+    function conectarFirebase() {
+      // Verificar que Firebase esté disponible
+      if (!window.firebase || !window.firebase.database) {
+        console.error('Firebase no está disponible. Verifica tu configuración.');
+        mostrarNotificacion('Error: No se pudo conectar con Firebase', 'error');
+        return;
+      }
+
+      const { database, ref, onValue } = window.firebase;
+
+      // Crear referencias a las colecciones de Firebase
+      referenciasSugerencias = ref(database, 'sugerencias');
+      referenciasRepresentantes = ref(database, 'representantes');
+      referenciaAdmin = ref(database, 'admin');
+
+      // ========== ESCUCHAR CAMBIOS EN SUGERENCIAS ==========
+      // onValue se dispara cada vez que hay cambios en la base de datos
+      onValue(referenciasSugerencias, (snapshot) => {
+        if (snapshot.exists()) {
+          const datos = snapshot.val();
+          // Convertir el objeto de Firebase en un array
+          todasLasSugerencias = Object.keys(datos).map(id => ({
+            id,
+            ...datos[id]
+          }));
+        } else {
+          todasLasSugerencias = [];
+        }
+        // Actualizar la interfaz cuando cambian los datos
+        actualizarInterfaz();
+      });
+
+      // ========== ESCUCHAR CAMBIOS EN REPRESENTANTES ==========
+      onValue(referenciasRepresentantes, (snapshot) => {
+        if (snapshot.exists()) {
+          const datos = snapshot.val();
+          representantes = Object.keys(datos).map(id => ({
+            id,
+            ...datos[id]
+          }));
+        } else {
+          representantes = [];
+        }
+        // Actualizar lista de representantes
+        actualizarListaRepresentantes();
+        actualizarBadges();
+      });
+
+      // ========== ESCUCHAR CAMBIOS EN DATOS DEL ADMIN ==========
+      onValue(referenciaAdmin, (snapshot) => {
+        if (snapshot.exists()) {
+          adminActual = snapshot.val();
+          // Actualizar la información del admin en la interfaz
+          document.getElementById('admin-name').textContent = adminActual.nombre || 'Administrador';
+          document.getElementById('admin-initials').textContent = adminActual.iniciales || 'AD';
+          document.getElementById('account-name').textContent = adminActual.nombre || 'Administrador';
+          document.getElementById('account-initials').textContent = adminActual.iniciales || 'AD';
+        }
+      });
+
+      mostrarNotificacion('Conectado a Firebase correctamente', 'success');
+    }
+
+    
+    // ========== NOTIFICACIONES (TOASTS) ==========
+    // Muestra una notificación temporal en la esquina inferior derecha
+    function mostrarNotificacion(mensaje, tipo = 'info') {
+      const contenedor = document.getElementById('toast-container');
+      // Colores según el tipo de notificación
+      const colores = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-blue-500' };
+      // Iconos según el tipo
+      const iconos = { success: '✓', error: '✕', info: 'ℹ' };
+
+      const notificacion = document.createElement('div');
+      notificacion.className = `toast flex items-center gap-3 px-4 py-3 ${colores[tipo]} text-white rounded-xl shadow-lg`;
+      notificacion.innerHTML = `
+        <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">${iconos[tipo]}</span>
+        <span class="font-medium">${mensaje}</span>
+      `;
+
+      contenedor.appendChild(notificacion);
+      // Desaparecer después de 3 segundos
+      setTimeout(() => {
+        notificacion.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => notificacion.remove(), 300);
+      }, 3000);
+    }
+
+    // ========== GESTIÓN DE TEMAS ==========
+    // Cambia entre tema claro y oscuro
+    function cambiarTema() {
+      temaActual = temaActual === 'dark' ? 'light' : 'dark';
+      aplicarTema();
+      localStorage.setItem('adminTema', temaActual);
+      actualizarBotonTema();
+    }
+
+    // Aplica los estilos del tema actual
+    function aplicarTema() {
+      const tema = temaActual === 'light' ? temaPalido : temaOscuro;
+      
+      if (temaActual === 'light') {
+        document.body.classList.add('light-theme');
+      } else {
+        document.body.classList.remove('light-theme');
+      }
+      
+      document.body.style.backgroundColor = tema.fondo;
+      document.body.style.color = tema.texto;
+    }
+
+    // Actualiza el botón del tema en la UI
+    function actualizarBotonTema() {
+      const iconoTema = document.getElementById('theme-icon');
+      const textoTema = document.getElementById('theme-text');
+      if (temaActual === 'light') {
+        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+        textoTema.textContent = 'Tema Oscuro';
+      } else {
+        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
+        textoTema.textContent = 'Tema Claro';
+      }
+    }
+
+    // Restaurar tema guardado del almacenamiento local
+    const temaBuscado = localStorage.getItem('adminTema');
+    if (temaBuscado) {
+      temaActual = temaBuscado;
+      aplicarTema();
+      actualizarBotonTema();
+    }
+
+    // ========== FUNCIONES DE AUTENTICACIÓN ==========
+
+    // Cambiar rol en la pantalla de login (Admin o Representante)
+    function cambiarRolLogin(rol) {
+      const btnAdmin = document.getElementById('btn-rol-admin');
+      const btnRep = document.getElementById('btn-rol-rep');
+      const seccionAdmin = document.getElementById('login-admin-section');
+      const seccionRep = document.getElementById('login-representante-section');
+
+      if (rol === 'admin') {
+        // Mostrar formulario de administrador
+        btnAdmin.classList.add('bg-red-500');
+        btnAdmin.classList.remove('bg-slate-700/50', 'text-slate-300', 'hover:bg-slate-700');
+        btnAdmin.classList.add('text-white');
+        
+        btnRep.classList.remove('bg-red-500', 'text-white', 'bg-purple-500');
+        btnRep.classList.add('bg-slate-700/50', 'text-slate-300', 'hover:bg-slate-700');
+        
+        seccionAdmin.classList.remove('hidden');
+        seccionRep.classList.add('hidden');
+      } else {
+        // Mostrar formulario de representante
+        btnRep.classList.add('bg-purple-500');
+        btnRep.classList.remove('bg-slate-700/50', 'text-slate-300', 'hover:bg-slate-700');
+        btnRep.classList.add('text-white');
+        
+        btnAdmin.classList.remove('bg-purple-500', 'bg-red-500', 'text-white');
+        btnAdmin.classList.add('bg-slate-700/50', 'text-slate-300', 'hover:bg-slate-700');
+        
+        seccionRep.classList.remove('hidden');
+        seccionAdmin.classList.add('hidden');
+      }
+    }
+
+    // ========== LOGIN DEL ADMINISTRADOR ==========
+    // Valida las credenciales del administrador contra Firebase
+    function loginAdministrador() {
+      const email = document.getElementById('login-admin-email').value.trim();
+      const password = document.getElementById('login-admin-password').value.trim();
+
+      // Validaciones básicas
+      if (!email || !password) {
+        mostrarToastLogin('Por favor completa todos los campos', 'error');
+        return;
+      }
+
+      // Validación de email
+      //const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      //if (!regexEmail.test(email)) {
+      //  mostrarToastLogin('Por favor ingresa un email válido', 'error');
+      //  return;
+      //}
+
+      // Simulamos una validación de credenciales (en producción, consultarías Firebase)
+      // Para este demo: admin@ejemplo.com / password123
+      if (email === 'admin' && password === '123') {
+        // Guardar sesión en localStorage
+        const datosUsuario = {
+          usuario: {
+            nombre: 'Administrador',
+            email: email,
+            iniciales: 'AD'
+          },
+          rol: 'admin'
+        };
+        localStorage.setItem('usuarioAutenticado', JSON.stringify(datosUsuario));
+        usuarioAutenticado = datosUsuario.usuario;
+        rolAutenticado = 'admin';
+        
+        mostrarToastLogin('¡Bienvenido, Administrador!', 'success');
+        setTimeout(mostrarPanelPrincipal, 1000);
+      } else {
+        mostrarToastLogin('Credenciales inválidas', 'error');
+      }
+    }
+
+    function mostrarPanelPrincipal() {
+      window.location.href = 'html/panel_admin.html';
+    }
+
+    // ========== LOGIN DEL REPRESENTANTE ==========
+    // Valida las credenciales del representante contra la lista de Firebase
+    function loginRepresentante() {
+      const usuario = document.getElementById('login-rep-usuario').value.trim();
+      const password = document.getElementById('login-rep-password').value.trim();
+
+      // Validaciones básicas
+      if (!usuario || !password) {
+        mostrarToastLogin('Por favor completa todos los campos', 'error');
+        return;
+      }
+
+      if (usuario.length < 3) {
+        mostrarToastLogin('El usuario debe tener al menos 3 caracteres', 'error');
+        return;
+      }
+
+      // Buscar representante en la lista (simulado con array local)
+      // En producción, consultarías Firebase
+      //const repEncontrado = representantes.find(r => r.usuario === usuario);
+
+      //if (!repEncontrado) {
+        //mostrarToastLogin('Usuario no encontrado', 'error');
+        //return;
+      //}
+
+      if (usuario == "admin" && password == "123") { 
+
+        // Guardar sesión en localStorage
+        //const datosUsuario = {
+        //  usuario: {
+        //    nombre: repEncontrado.nombre,
+        //    usuario: repEncontrado.usuario,
+        //    id: repEncontrado.id
+        //  },
+        //  rol: 'representante'
+        //};
+        //localStorage.setItem('usuarioAutenticado', JSON.stringify(datosUsuario));
+        //usuarioAutenticado = datosUsuario.usuario;
+        rolAutenticado = 'representante';
+        
+        mostrarToastLogin(`¡Bienvenido, ${usuario}!`, 'success');
+        setTimeout(() => {window.location.href = 'html/panel_usuario.html';}, 1000);
+      }
+    }
+
+
+    // ========== TOAST PARA PANTALLA DE LOGIN ==========
+    // Notificaciones especiales para la pantalla de login
+    function mostrarToastLogin(mensaje, tipo = 'info') {
+      const loginScreen = document.getElementById('login-screen');
+      const colores = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-blue-500' };
+      const iconos = { success: '✓', error: '✕', info: 'ℹ' };
+
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-4 right-4 flex items-center gap-3 px-4 py-3 ${colores[tipo]} text-white rounded-xl shadow-lg animate-slide-in z-50`;
+      toast.innerHTML = `
+        <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">${iconos[tipo]}</span>
+        <span class="font-medium">${mensaje}</span>
+      `;
+
+      loginScreen.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ========== CERRAR SESIÓN ==========
+    // Limpia los datos de sesión y vuelve a la pantalla de login
+    function cerrarSesion() {
+      localStorage.removeItem('usuarioAutenticado');
+      usuarioAutenticado = null;
+      rolAutenticado = null;
+      
+      document.getElementById('app').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+      
+      // Limpiar campos de login
+      document.getElementById('login-admin-email').value = '';
+      document.getElementById('login-admin-password').value = '';
+      document.getElementById('login-rep-usuario').value = '';
+      document.getElementById('login-rep-password').value = '';
+      
+      mostrarToastLogin('Sesión cerrada correctamente', 'success');
+    }
+
+    // ========== CERRAR MODALES AL PRESIONAR ESC ==========
+    // Permite cerrar cualquier modal presionando la tecla ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.getElementById('account-modal').classList.add('hidden');
+        document.getElementById('logout-modal').classList.add('hidden');
+        document.getElementById('create-representative-modal').classList.add('hidden');
+        document.getElementById('response-modal').classList.add('hidden');
+        document.getElementById('edit-representative-modal').classList.add('hidden');
+      }
+    });
+
+    
+  </script> 
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9da7568121a85c71',t:'MTc3MzE5ODMzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

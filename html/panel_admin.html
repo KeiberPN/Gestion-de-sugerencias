@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrativo</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* ========== ANIMACIONES ========== */
+    .card-hover { 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    }
+    .card-hover:hover { 
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(239, 68, 68, 0.15);
+    }
+    
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-in-left { animation: slideInLeft 0.5s ease-out; }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .pulse-dot { 
+      animation: pulse 2s infinite; 
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.1); }
+    }
+    
+    .sidebar-item { 
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .sidebar-item:hover { 
+      padding-left: 1.5rem;
+      background: rgba(30, 41, 59, 0.5);
+    }
+    
+    /* Modo claro - sidebar item */
+    body.light-theme .sidebar-item:hover {
+      background: rgba(226, 232, 240, 0.5);
+    }
+    
+    .toast { animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    /* ========== BARRA DE DESPLAZAMIENTO PERSONALIZADA ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.5);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.7);
+    }
+    
+    /* ========== ANIMACIONES DE BADGES ========== */
+    .badge-pulse {
+      animation: badgePulse 2s infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    /* ========== EFECTOS DE ÍCONOS Y BOTONES ========== */
+    .icon-btn {
+      transition: all 0.3s ease;
+    }
+    .icon-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    /* ========== MODAL Y BACKDROP ========== */
+    .modal-backdrop {
+      animation: backdropFade 0.3s ease-out;
+    }
+    @keyframes backdropFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* ========== BARRAS DE PROGRESO ========== */
+    .progress-fill {
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* ========== TARJETAS DE ESTADÍSTICAS ========== */
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    }
+    
+    /* Modo claro - borde de tarjeta */
+    body.light-theme .stat-card::before {
+      background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.05), transparent);
+    }
+    
+    /* ========== ENTRADAS DE FORMULARIOS ========== */
+    input, textarea, select {
+      transition: all 0.3s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.1);
+    }
+    
+    /* ========== SELECCIÓN DE TEXTO ========== */
+    ::selection {
+      background: rgba(239, 68, 68, 0.3);
+      color: inherit;
+    }
+
+    /* ========== TEMA CLARO ========== */
+    body.light-theme {
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script><!-- Firebase SDK - Bibliotecas necesarias para conectar con Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set, push, update, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+    // Configuración de Firebase - Reemplaza con tus credenciales reales
+    const firebaseConfig = {
+      apiKey: "AIzaSyDzN5xN5xN5xN5xN5xN5xN5xN5xN5xN5xN5x",
+      authDomain: "tu-proyecto.firebaseapp.com",
+      databaseURL: "https://tu-proyecto.firebaseio.com",
+      projectId: "tu-proyecto",
+      storageBucket: "tu-proyecto.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef1234567890"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Exponer Firebase globalmente para que el resto del código pueda acceder
+    window.firebase = { database, ref, onValue, set, push, update, remove };
+  </script>
+ </head>
+ <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
+  <div id="app" class="h-full w-full flex">
+   <!-- Sidebar -->
+   <aside id="sidebar" class="w-72 bg-slate-800/50 backdrop-blur-xl border-r border-slate-700/50 flex flex-col">
+    <!-- Logo & User -->
+    <div class="p-6 border-b border-slate-700/50">
+     <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center">
+       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+       </svg>
+      </div>
+      <div>
+       <h1 id="panel-title" class="font-bold text-lg text-white">Panel Administrativo</h1>
+       <p class="text-xs text-slate-400">Gestión de Sugerencias</p>
+      </div>
+     </div>
+     <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl cursor-pointer hover:bg-slate-700/50 transition-colors" onclick="abrirModalCuenta()">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white font-semibold">
+       <span id="admin-initials">AD</span>
+      </div>
+      <div class="flex-1 min-w-0">
+       <p class="font-medium text-sm text-white truncate" id="admin-name">Administrador</p>
+       <p class="text-xs text-slate-400">Admin</p>
+      </div><span class="w-2 h-2 rounded-full bg-red-400 pulse-dot"></span>
+     </div>
+    </div><!-- Navigation -->
+    <nav class="flex-1 p-4 space-y-2">
+     <button onclick="mostrarSeccion('dashboard')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors bg-red-500/20 text-red-400" data-section="dashboard">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      </svg><span class="font-medium">Dashboard</span> </button> <button onclick="mostrarSeccion('sugerencias')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="sugerencias">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+      </svg><span class="font-medium">Sugerencias</span> <span id="badge-sugerencias" class="ml-auto bg-red-500/20 text-red-400 text-xs font-semibold px-2 py-0.5 rounded-full">0</span> </button> <button onclick="mostrarSeccion('representantes')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="representantes">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
+      </svg><span class="font-medium">Representantes</span> <span id="badge-representantes" class="ml-auto bg-red-500/20 text-red-400 text-xs font-semibold px-2 py-0.5 rounded-full">0</span> </button> <button onclick="mostrarSeccion('reportes')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="reportes">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg><span class="font-medium">Reportes</span> </button>
+    </nav><!-- Theme & Settings -->
+    <div class="p-4 border-t border-slate-700/50 space-y-2">
+     <button onclick="cambiarTema()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-colors">
+      <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg><span class="font-medium" id="theme-text">Tema Claro</span> </button>
+    </div><!-- Logout -->
+    <div class="p-4 border-t border-slate-700/50">
+     <button onclick="manejarCierreSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      </svg><span class="font-medium">Cerrar Sesión</span> </button>
+    </div>
+   </aside><!-- Main Content -->
+   <main class="flex-1 overflow-auto">
+    <div class="p-8">
+     <!-- Dashboard Section -->
+     <section id="section-dashboard" class="fade-in">
+      <div class="mb-8">
+       <h2 id="welcome-message" class="text-3xl font-bold text-white mb-2">Bienvenido, Administrador</h2>
+       <p class="text-slate-400">Panel de control del sistema de sugerencias</p>
+      </div><!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-blue-500/30">
+        <div class="flex items-start justify-between">
+         <div class="flex-1">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 flex items-center justify-center mb-4">
+           <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+           </svg>
+          </div>
+          <p id="stat-total-sugerencias" class="text-5xl font-bold text-white mb-2">0</p>
+          <p class="text-sm text-slate-400">Sugerencias totales</p>
+          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-blue-500 to-blue-400"></div>
+         </div>
+        </div>
+       </div>
+       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-amber-500/30">
+        <div class="flex items-start justify-between">
+         <div class="flex-1">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/30 to-amber-600/20 flex items-center justify-center mb-4">
+           <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+           </svg>
+          </div>
+          <p id="stat-pendientes" class="text-5xl font-bold text-amber-400 mb-2">0</p>
+          <p class="text-sm text-slate-400">Por revisar</p>
+          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-400"></div>
+         </div>
+        </div>
+       </div>
+       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30">
+        <div class="flex items-start justify-between">
+         <div class="flex-1">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/20 flex items-center justify-center mb-4">
+           <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+           </svg>
+          </div>
+          <p id="stat-respondidas" class="text-5xl font-bold text-emerald-400 mb-2">0</p>
+          <p class="text-sm text-slate-400">Respondidas</p>
+          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
+         </div>
+        </div>
+       </div>
+       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-purple-500/30">
+        <div class="flex items-start justify-between">
+         <div class="flex-1">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-600/20 flex items-center justify-center mb-4">
+           <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
+           </svg>
+          </div>
+          <p id="stat-representantes" class="text-5xl font-bold text-purple-400 mb-2">0</p>
+          <p class="text-sm text-slate-400">Representantes</p>
+          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-purple-500 to-purple-400"></div>
+         </div>
+        </div>
+       </div>
+      </div><!-- Recent Activity -->
+      <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
+       <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg> Actividad Reciente</h3>
+       <div id="recent-activity" class="space-y-4">
+        <div class="text-center py-8 text-slate-500">
+         <p>No hay actividad reciente</p>
+        </div>
+       </div>
+      </div>
+     </section><!-- Sugerencias Section -->
+     <section id="section-sugerencias" class="hidden fade-in">
+      <div class="mb-8">
+       <h2 class="text-3xl font-bold text-white mb-2">Sugerencias Recibidas</h2>
+       <p class="text-slate-400">Revisa y responde todas las sugerencias de los representantes</p>
+      </div>
+      <div class="mb-6 flex flex-col md:flex-row gap-3">
+       <select id="filter-estado-sugerencias" onchange="applyFilters()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todos los estados</option> <option value="pendiente">Pendiente</option> <option value="en_revision">En Revisión</option> <option value="respondida">Respondida</option> <option value="aprobada">Aprobada</option> <option value="rechazada">Rechazada</option> </select> <select id="filter-prioridad" onchange="applyFilters()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todas las prioridades</option> <option value="alta">Alta</option> <option value="media">Media</option> <option value="baja">Baja</option> </select> <input type="text" id="search-sugerencias" placeholder="Buscar sugerencia..." onkeyup="applyFilters()" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div id="sugerencias-list" class="space-y-4">
+       <div class="text-center py-16 text-slate-500">
+        <p>No hay sugerencias</p>
+       </div>
+      </div>
+     </section><!-- Representantes Section -->
+     <section id="section-representantes" class="hidden fade-in">
+      <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+       <div>
+        <h2 class="text-3xl font-bold text-white mb-2">Gestión de Representantes</h2>
+        <p class="text-slate-400">Crea y administra cuentas de representantes</p>
+       </div><button onclick="openCreateRepresentativeModal()" class="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg> Crear Representante </button>
+      </div>
+      <div id="representantes-list" class="space-y-4">
+       <div class="text-center py-16 text-slate-500">
+        <p>No hay representantes</p>
+       </div>
+      </div>
+     </section><!-- Reportes Section -->
+     <section id="section-reportes" class="hidden fade-in">
+      <div class="mb-8">
+       <h2 class="text-3xl font-bold text-white mb-2">Reportes y Estadísticas</h2>
+       <p class="text-slate-400">Análisis detallado del sistema de sugerencias</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+       <!-- Por Estado -->
+       <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
+        <h3 class="text-lg font-bold text-white mb-6">Sugerencias por Estado</h3>
+        <div id="stats-estado" class="space-y-4">
+         <p class="text-slate-500 text-center py-8">Sin datos</p>
+        </div>
+       </div><!-- Por Prioridad -->
+       <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
+        <h3 class="text-lg font-bold text-white mb-6">Por Prioridad</h3>
+        <div id="stats-prioridad" class="space-y-4">
+         <p class="text-slate-500 text-center py-8">Sin datos</p>
+        </div>
+       </div><!-- Actividad por Representante -->
+       <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 lg:col-span-2">
+        <h3 class="text-lg font-bold text-white mb-6">Top Representantes por Sugerencias</h3>
+        <div id="stats-representantes" class="space-y-3">
+         <p class="text-slate-500 text-center py-8">Sin datos</p>
+        </div>
+       </div>
+      </div>
+     </section>
+    </div>
+   </main><!-- Toast Container -->
+   <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Logout Modal -->
+   <div id="logout-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-sm w-full">
+     <div class="text-center">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+       <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+       </svg>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-2">¿Cerrar sesión?</h3>
+      <p class="text-slate-400 mb-6">Se cerrará tu sesión de administrador.</p>
+      <div class="flex gap-3">
+       <button onclick="closeLogoutModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="confirmLogout()" class="flex-1 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-colors">Cerrar Sesión</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Account Modal -->
+   <div id="account-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-md w-full my-4">
+     <div class="flex items-center justify-between mb-6">
+      <h3 class="text-2xl font-bold text-white">Mi Cuenta</h3><button onclick="closeAccountModal()" class="text-slate-400 hover:text-white">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div class="space-y-6">
+      <div class="text-center">
+       <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-2xl text-white font-bold">
+        <span id="account-initials">AD</span>
+       </div>
+       <p class="text-lg font-bold text-white" id="account-name">Administrador</p>
+       <p class="text-sm text-slate-400">Sistema Administrativo</p>
+      </div>
+      <div class="border-t border-slate-700/50 pt-6">
+       <h4 class="font-semibold text-white mb-3 flex items-center gap-2">
+        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg> Cambiar Contraseña</h4><input type="password" id="input-current-pwd" placeholder="Contraseña actual" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-2"> <input type="password" id="input-new-pwd" placeholder="Nueva contraseña" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-2"> <input type="password" id="input-confirm-pwd" placeholder="Confirmar contraseña" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-3"> <button onclick="updateAdminPassword()" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors">Actualizar Contraseña</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Create Representative Modal -->
+   <div id="create-representative-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-md w-full my-4">
+     <div class="flex items-center justify-between mb-6">
+      <h3 class="text-2xl font-bold text-white">Crear Representante</h3><button onclick="closeCreateRepresentativeModal()" class="text-slate-400 hover:text-white">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div class="space-y-4">
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Nombre Completo *</label> <input type="text" id="input-rep-nombre" placeholder="Ej: Juan Pérez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Usuario *</label> <input type="text" id="input-rep-usuario" placeholder="Ej: juan.perez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña *</label> <input type="password" id="input-rep-password" placeholder="Contraseña inicial" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Email</label> <input type="email" id="input-rep-email" placeholder="email@ejemplo.com" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="closeCreateRepresentativeModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="createRepresentative()" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Crear</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Response Modal -->
+   <div id="response-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-2xl w-full my-4">
+     <div class="flex items-center justify-between mb-6">
+      <h3 class="text-2xl font-bold text-white">Responder Sugerencia</h3><button onclick="closeResponseModal()" class="text-slate-400 hover:text-white">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div class="space-y-4 mb-6 max-h-60 overflow-y-auto">
+      <div>
+       <p class="text-sm text-slate-400">Título</p>
+       <p id="response-titulo" class="text-white font-medium"></p>
+      </div>
+      <div>
+       <p class="text-sm text-slate-400">Descripción</p>
+       <p id="response-descripcion" class="text-slate-300 text-sm"></p>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+       <div>
+        <p class="text-sm text-slate-400">Categoría</p>
+        <p id="response-categoria" class="text-white font-medium"></p>
+       </div>
+       <div>
+        <p class="text-sm text-slate-400">Prioridad</p>
+        <p id="response-prioridad" class="text-white font-medium"></p>
+       </div>
+       <div>
+        <p class="text-sm text-slate-400">Estado Actual</p>
+        <p id="response-estado" class="text-white font-medium"></p>
+       </div>
+      </div>
+     </div>
+     <div class="border-t border-slate-700/50 pt-6 space-y-4">
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Nuevo Estado *</label> <select id="response-new-estado" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="en_revision">En Revisión</option> <option value="respondida">Respondida</option> <option value="aprobada">Aprobada</option> <option value="rechazada">Rechazada</option> </select>
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Tu Respuesta *</label> <textarea id="response-text" rows="4" placeholder="Escribe tu respuesta aquí..." class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"></textarea>
+      </div>
+      <div class="flex gap-3">
+       <button onclick="closeResponseModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="sendResponse()" id="response-send-btn" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Enviar</button>
+      </div>
+     </div>
+    </div>
+   </div><!-- Edit Representative Modal -->
+   <div id="edit-representative-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-md w-full my-4">
+     <div class="flex items-center justify-between mb-6">
+      <h3 class="text-2xl font-bold text-white">Editar Representante</h3><button onclick="closeEditRepresentativeModal()" class="text-slate-400 hover:text-white">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div class="space-y-4">
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Nombre Completo</label> <input type="text" id="edit-rep-nombre" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Email</label> <input type="email" id="edit-rep-email" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+       <label class="block text-sm font-medium text-slate-300 mb-2">Estado</label> <select id="edit-rep-estado" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="activo">Activo</option> <option value="inactivo">Inactivo</option> </select>
+      </div>
+      <div class="flex gap-3 pt-4">
+       <button onclick="closeEditRepresentativeModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="saveEditRepresentative()" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Guardar</button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // ========== CONFIGURACIÓN INICIAL ==========
+    // Configuración predeterminada para los textos editables del panel
+    const configuracionPredeterminada = {
+      panel_title: 'Panel Administrativo',
+      welcome_message: 'Bienvenido, Administrador'
+    };
+
+    // ========== VARIABLES GLOBALES ==========
+    // Arrays para almacenar datos de sugerencias y representantes
+    let todasLasSugerencias = [];
+    let representantes = [];
+    let temaActual = 'dark';
+    
+    // Información del administrador actual
+    let adminActual = { nombre: 'Administrador', iniciales: 'AD', contraseña: 'admin123' };
+    let sugerenciaSeleccionada = null;
+    let representanteEnEdicion = null;
+
+    // ========== REFERENCIAS DE FIREBASE ==========
+    // Estas referencias apuntan a las colecciones en la base de datos Firebase
+    let referenciasSugerencias;
+    let referenciasRepresentantes;
+    let referenciaAdmin;
+
+    // ========== CONFIGURACIÓN DE CATEGORÍAS ==========
+    // Mapeo de categorías con emojis para visualización
+    const etiquetasCategorias = {
+      infraestructura: '🏗️ Infraestructura',
+      servicios: '🛠️ Servicios Públicos',
+      seguridad: '🛡️ Seguridad',
+      educacion: '📚 Educación',
+      salud: '🏥 Salud',
+      medioambiente: '🌿 Medio Ambiente',
+      cultura: '🎭 Cultura y Recreación',
+      transporte: '🚌 Transporte',
+      otro: '📋 Otro'
+    };
+
+    // ========== CONFIGURACIÓN DE ESTADOS ==========
+    // Estados posibles para las sugerencias con etiquetas, colores e iconos
+    const configuracionEstados = {
+      pendiente: { etiqueta: 'Pendiente', color: 'amber', icono: '⏳' },
+      en_revision: { etiqueta: 'En Revisión', color: 'violet', icono: '🔍' },
+      respondida: { etiqueta: 'Respondida', color: 'blue', icono: '💬' },
+      aprobada: { etiqueta: 'Aprobada', color: 'emerald', icono: '✅' },
+      rechazada: { etiqueta: 'Rechazada', color: 'red', icono: '❌' }
+    };
+
+    // ========== CONFIGURACIÓN DE PRIORIDADES ==========
+    // Niveles de prioridad con etiquetas, colores e iconos
+    const configuracionPrioridades = {
+      baja: { etiqueta: 'Baja', color: 'emerald', icono: '🟢' },
+      media: { etiqueta: 'Media', color: 'amber', icono: '🟡' },
+      alta: { etiqueta: 'Alta', color: 'red', icono: '🔴' }
+    };
+
+    // ========== PALETAS DE COLORES PARA TEMAS ==========
+    // Paleta de colores para el tema claro
+    const temaPalido = {
+      fondo: '#f8fafc',
+      barraLateral: '#f1f5f9',
+      tarjeta: '#ffffff',
+      texto: '#0f172a',
+      textoSecundario: '#64748b',
+      borde: '#e2e8f0'
+    };
+
+    // Paleta de colores para el tema oscuro (predeterminado)
+    const temaOscuro = {
+      fondo: '#0f172a',
+      barraLateral: '#1e293b',
+      tarjeta: '#1e293b',
+      texto: '#f1f5f9',
+      textoSecundario: '#cbd5e1',
+      borde: '#334155'
+    };
+
+    
+
+    // ========== CONEXIÓN CON FIREBASE ==========
+    // Esta función establece la conexión con Firebase y carga los datos
+    function conectarFirebase() {
+      // Verificar que Firebase esté disponible
+      if (!window.firebase || !window.firebase.database) {
+        console.error('Firebase no está disponible. Verifica tu configuración.');
+        mostrarNotificacion('Error: No se pudo conectar con Firebase', 'error');
+        return;
+      }
+
+      const { database, ref, onValue } = window.firebase;
+
+      // Crear referencias a las colecciones de Firebase
+      referenciasSugerencias = ref(database, 'sugerencias');
+      referenciasRepresentantes = ref(database, 'representantes');
+      referenciaAdmin = ref(database, 'admin');
+
+      // ========== ESCUCHAR CAMBIOS EN SUGERENCIAS ==========
+      // onValue se dispara cada vez que hay cambios en la base de datos
+      onValue(referenciasSugerencias, (snapshot) => {
+        if (snapshot.exists()) {
+          const datos = snapshot.val();
+          // Convertir el objeto de Firebase en un array
+          todasLasSugerencias = Object.keys(datos).map(id => ({
+            id,
+            ...datos[id]
+          }));
+        } else {
+          todasLasSugerencias = [];
+        }
+        // Actualizar la interfaz cuando cambian los datos
+        actualizarInterfaz();
+      });
+
+      // ========== ESCUCHAR CAMBIOS EN REPRESENTANTES ==========
+      onValue(referenciasRepresentantes, (snapshot) => {
+        if (snapshot.exists()) {
+          const datos = snapshot.val();
+          representantes = Object.keys(datos).map(id => ({
+            id,
+            ...datos[id]
+          }));
+        } else {
+          representantes = [];
+        }
+        // Actualizar lista de representantes
+        actualizarListaRepresentantes();
+        actualizarBadges();
+      });
+
+      // ========== ESCUCHAR CAMBIOS EN DATOS DEL ADMIN ==========
+      onValue(referenciaAdmin, (snapshot) => {
+        if (snapshot.exists()) {
+          adminActual = snapshot.val();
+          // Actualizar la información del admin en la interfaz
+          document.getElementById('admin-name').textContent = adminActual.nombre || 'Administrador';
+          document.getElementById('admin-initials').textContent = adminActual.iniciales || 'AD';
+          document.getElementById('account-name').textContent = adminActual.nombre || 'Administrador';
+          document.getElementById('account-initials').textContent = adminActual.iniciales || 'AD';
+        }
+      });
+
+      mostrarNotificacion('Conectado a Firebase correctamente', 'success');
+    }
+
+    // ========== MOSTRAR SECCIÓN ==========
+    // Función para navegar entre diferentes secciones del panel
+    function mostrarSeccion(seccion) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`section-${seccion}`).classList.remove('hidden');
+      
+      // Actualizar botones de navegación - marcar como activo
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-red-500/20', 'text-red-400');
+        btn.classList.add('text-slate-300', 'hover:bg-slate-700/50');
+      });
+      
+      const btnActivo = document.querySelector(`[data-section="${seccion}"]`);
+      if (btnActivo) {
+        btnActivo.classList.remove('text-slate-300', 'hover:bg-slate-700/50');
+        btnActivo.classList.add('bg-red-500/20', 'text-red-400');
+      }
+    }
+
+    // ========== ACTUALIZAR INTERFAZ ==========
+    // Función maestra que actualiza todos los elementos de la UI
+    function actualizarInterfaz() {
+      actualizarEstadisticas();
+      actualizarBadges();
+      actualizarActividadReciente();
+      actualizarListaSugerencias();
+      actualizarEstadisticasGenerales();
+    }
+
+    // ========== ACTUALIZAR ESTADÍSTICAS ==========
+    // Recalcula y muestra los números en las tarjetas de estadísticas
+    function actualizarEstadisticas() {
+      const total = todasLasSugerencias.length;
+      const pendientes = todasLasSugerencias.filter(s => s.estado === 'pendiente').length;
+      const respondidas = todasLasSugerencias.filter(s => s.estado === 'respondida').length;
+
+      document.getElementById('stat-total-sugerencias').textContent = total;
+      document.getElementById('stat-pendientes').textContent = pendientes;
+      document.getElementById('stat-respondidas').textContent = respondidas;
+      document.getElementById('stat-representantes').textContent = representantes.length;
+    }
+
+    // ========== ACTUALIZAR BADGES ==========
+    // Muestra el contador de sugerencias y representantes en los botones del sidebar
+    function actualizarBadges() {
+      document.getElementById('badge-sugerencias').textContent = todasLasSugerencias.length;
+      document.getElementById('badge-representantes').textContent = representantes.length;
+    }
+
+    // ========== ACTUALIZAR ACTIVIDAD RECIENTE ==========
+    // Muestra las últimas 5 sugerencias en la sección de actividad
+    function actualizarActividadReciente() {
+      const contenedor = document.getElementById('recent-activity');
+      const recientes = [...todasLasSugerencias]
+        .sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion))
+        .slice(0, 5);
+
+      if (recientes.length === 0) {
+        contenedor.innerHTML = '<div class="text-center py-8 text-slate-500"><p>No hay actividad reciente</p></div>';
+        return;
+      }
+
+      contenedor.innerHTML = recientes.map(s => {
+        const estado = configuracionEstados[s.estado] || configuracionEstados.pendiente;
+        const fecha = new Date(s.fecha_creacion);
+        const tiempoTranscurrido = obtenerTiempoTranscurrido(fecha);
+        return `
+          <div class="flex items-center gap-4 p-4 bg-slate-700/30 rounded-xl">
+            <div class="text-2xl">${estado.icono}</div>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-white truncate">${escaparHtml(s.titulo)}</p>
+              <p class="text-sm text-slate-400">por ${escaparHtml(s.autor_nombre || 'Desconocido')}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-500">${tiempoTranscurrido}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ========== ACTUALIZAR LISTA DE SUGERENCIAS ==========
+    // Muestra todas las sugerencias con opción de filtrado y búsqueda
+    function actualizarListaSugerencias() {
+      const contenedor = document.getElementById('sugerencias-list');
+      const filtroEstado = document.getElementById('filter-estado-sugerencias').value;
+      const filtroPrioridad = document.getElementById('filter-prioridad').value;
+      const textoBusqueda = (document.getElementById('search-sugerencias').value || '').toLowerCase();
+
+      let filtradas = [...todasLasSugerencias];
+
+      // Aplicar filtros
+      if (filtroEstado) {
+        filtradas = filtradas.filter(s => s.estado === filtroEstado);
+      }
+      if (filtroPrioridad) {
+        filtradas = filtradas.filter(s => s.prioridad === filtroPrioridad);
+      }
+      if (textoBusqueda) {
+        filtradas = filtradas.filter(s => 
+          s.titulo.toLowerCase().includes(textoBusqueda) || 
+          s.descripcion.toLowerCase().includes(textoBusqueda)
+        );
+      }
+
+      // Ordenar por fecha más reciente
+      filtradas.sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion));
+
+      if (filtradas.length === 0) {
+        contenedor.innerHTML = '<div class="text-center py-16 text-slate-500"><p>No hay sugerencias</p></div>';
+        return;
+      }
+
+      contenedor.innerHTML = filtradas.map((s, indice) => {
+        const estado = configuracionEstados[s.estado] || configuracionEstados.pendiente;
+        const prioridad = configuracionPrioridades[s.prioridad] || configuracionPrioridades.baja;
+        return `
+          <div class="card-hover bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="text-2xl">${estado.icono}</span>
+                  <h3 class="text-lg font-bold text-white">${escaparHtml(s.titulo)}</h3>
+                </div>
+                <p class="text-slate-400 mb-4 line-clamp-2">${escaparHtml(s.descripcion)}</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span class="px-3 py-1 text-xs font-medium rounded-lg bg-slate-700/50 text-slate-300">${etiquetasCategorias[s.categoria] || s.categoria}</span>
+                  <span class="px-3 py-1 text-xs font-medium rounded-lg bg-${estado.color}-500/20 text-${estado.color}-400">${estado.etiqueta}</span>
+                  <span class="px-3 py-1 text-xs font-medium rounded-lg bg-${prioridad.color}-500/20 text-${prioridad.color}-400">${prioridad.icono} ${prioridad.etiqueta}</span>
+                </div>
+                <p class="text-sm text-slate-400">De: <span class="font-medium text-white">${escaparHtml(s.autor_nombre || 'Desconocido')}</span></p>
+              </div>
+              <button onclick="abrirModalRespuesta('${s.id}')" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">
+                Responder
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ========== ACTUALIZAR LISTA DE REPRESENTANTES ==========
+    // Muestra todos los representantes registrados con opciones de editar y eliminar
+    function actualizarListaRepresentantes() {
+      const contenedor = document.getElementById('representantes-list');
+
+      if (representantes.length === 0) {
+        contenedor.innerHTML = '<div class="text-center py-16 text-slate-500"><p>No hay representantes</p></div>';
+        return;
+      }
+
+      contenedor.innerHTML = representantes.map((r, indice) => {
+        const iniciales = r.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        const esActivo = r.estado === 'activo';
+        return `
+          <div class="card-hover bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4 flex-1">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">
+                  ${iniciales}
+                </div>
+                <div>
+                  <h3 class="font-bold text-white">${escaparHtml(r.nombre)}</h3>
+                  <p class="text-sm text-slate-400">@${escaparHtml(r.usuario)}</p>
+                  <p class="text-xs text-slate-500">${r.email}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="px-3 py-1 rounded-lg text-xs font-medium ${esActivo ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}">
+                  ${esActivo ? '● Activo' : '● Inactivo'}
+                </span>
+                <button onclick="abrirModalEditarRepresentante('${r.id}')" class="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button onclick="eliminarRepresentante('${r.id}')" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ========== ACTUALIZAR ESTADÍSTICAS GENERALES ==========
+    // Calcula y muestra gráficos de estadísticas por estado, prioridad y representante
+    function actualizarEstadisticasGenerales() {
+      // ========== ESTADÍSTICAS POR ESTADO ==========
+      const porEstado = {};
+      todasLasSugerencias.forEach(s => {
+        porEstado[s.estado] = (porEstado[s.estado] || 0) + 1;
+      });
+
+      const contenedorEstado = document.getElementById('stats-estado');
+      if (Object.keys(porEstado).length === 0) {
+        contenedorEstado.innerHTML = '<p class="text-slate-500 text-center py-8">Sin datos</p>';
+      } else {
+        const total = todasLasSugerencias.length;
+        contenedorEstado.innerHTML = Object.entries(porEstado).map(([estado, cantidad]) => {
+          const pct = Math.round((cantidad / total) * 100);
+          const cfg = configuracionEstados[estado] || { etiqueta: estado, color: 'slate', icono: '📋' };
+          return `
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-sm text-slate-300">${cfg.icono} ${cfg.etiqueta}</span>
+                <span class="text-sm text-slate-400">${cantidad} (${pct}%)</span>
+              </div>
+              <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                <div class="h-full bg-${cfg.color}-500 rounded-full transition-all" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // ========== ESTADÍSTICAS POR PRIORIDAD ==========
+      const porPrioridad = {};
+      todasLasSugerencias.forEach(s => {
+        porPrioridad[s.prioridad] = (porPrioridad[s.prioridad] || 0) + 1;
+      });
+
+      const contenedorPrio = document.getElementById('stats-prioridad');
+      if (Object.keys(porPrioridad).length === 0) {
+        contenedorPrio.innerHTML = '<p class="text-slate-500 text-center py-8">Sin datos</p>';
+      } else {
+        const total = todasLasSugerencias.length;
+        contenedorPrio.innerHTML = ['alta', 'media', 'baja']
+          .filter(p => porPrioridad[p])
+          .map(prioridad => {
+            const cantidad = porPrioridad[prioridad];
+            const pct = Math.round((cantidad / total) * 100);
+            const cfg = configuracionPrioridades[prioridad];
+            return `
+              <div>
+                <div class="flex justify-between mb-1">
+                  <span class="text-sm text-slate-300">${cfg.icono} ${cfg.etiqueta}</span>
+                  <span class="text-sm text-slate-400">${cantidad} (${pct}%)</span>
+                </div>
+                <div class="h-2 bg-slate-700 rounded-full overflow-hidden">
+                  <div class="h-full bg-${cfg.color}-500 rounded-full transition-all" style="width: ${pct}%"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+      }
+
+      // ========== REPRESENTANTES DESTACADOS ==========
+      const porRep = {};
+      todasLasSugerencias.forEach(s => {
+        porRep[s.autor_nombre || 'Desconocido'] = (porRep[s.autor_nombre || 'Desconocido'] || 0) + 1;
+      });
+
+      const contenedorRep = document.getElementById('stats-representantes');
+      if (Object.keys(porRep).length === 0) {
+        contenedorRep.innerHTML = '<p class="text-slate-500 text-center py-8">Sin datos</p>';
+      } else {
+        contenedorRep.innerHTML = Object.entries(porRep)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5)
+          .map(([rep, cantidad]) => {
+            return `
+              <div class="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
+                <span class="text-slate-300">${escaparHtml(rep)}</span>
+                <span class="px-3 py-1 text-sm font-semibold rounded-lg bg-red-500/20 text-red-400">${cantidad} sugerencias</span>
+              </div>
+            `;
+          }).join('');
+      }
+    }
+
+    // ========== APLICAR FILTROS ==========
+    // Se ejecuta cuando el usuario cambia los filtros de búsqueda
+    function applyFilters() {
+      actualizarListaSugerencias();
+    }
+
+    // ========== MODAL DE RESPUESTA ==========
+    // Abre el modal para responder a una sugerencia específica
+    function abrirModalRespuesta(sugerenciaId) {
+      sugerenciaSeleccionada = todasLasSugerencias.find(s => s.id === sugerenciaId);
+      if (!sugerenciaSeleccionada) return;
+
+      document.getElementById('response-titulo').textContent = sugerenciaSeleccionada.titulo;
+      document.getElementById('response-descripcion').textContent = sugerenciaSeleccionada.descripcion;
+      document.getElementById('response-categoria').textContent = etiquetasCategorias[sugerenciaSeleccionada.categoria] || sugerenciaSeleccionada.categoria;
+      document.getElementById('response-prioridad').textContent = configuracionPrioridades[sugerenciaSeleccionada.prioridad].etiqueta;
+      document.getElementById('response-estado').textContent = configuracionEstados[sugerenciaSeleccionada.estado].etiqueta;
+      document.getElementById('response-text').value = '';
+      document.getElementById('response-new-estado').value = 'respondida';
+
+      document.getElementById('response-modal').classList.remove('hidden');
+    }
+
+    // Cierra el modal de respuesta
+    function closeResponseModal() {
+      document.getElementById('response-modal').classList.add('hidden');
+      sugerenciaSeleccionada = null;
+    }
+
+    // Envía la respuesta a Firebase
+    function sendResponse() {
+      if (!sugerenciaSeleccionada) return;
+
+      const nuevoEstado = document.getElementById('response-new-estado').value;
+      const respuesta = document.getElementById('response-text').value.trim();
+
+      if (!respuesta) {
+        mostrarNotificacion('Por favor escribe una respuesta', 'error');
+        return;
+      }
+
+      const { database, ref, update } = window.firebase;
+
+      // Actualizar la sugerencia en Firebase
+      const referenciaSugerencia = ref(database, `sugerencias/${sugerenciaSeleccionada.id}`);
+      update(referenciaSugerencia, {
+        estado: nuevoEstado,
+        respuesta: respuesta,
+        fecha_actualizacion: new Date().toISOString()
+      }).then(() => {
+        mostrarNotificacion('Respuesta enviada correctamente', 'success');
+        closeResponseModal();
+      }).catch((error) => {
+        console.error('Error al enviar respuesta:', error);
+        mostrarNotificacion('Error al enviar la respuesta', 'error');
+      });
+    }
+
+    // ========== GESTIÓN DE REPRESENTANTES ==========
+    // Abre modal para crear un nuevo representante
+    function openCreateRepresentativeModal() {
+      document.getElementById('input-rep-nombre').value = '';
+      document.getElementById('input-rep-usuario').value = '';
+      document.getElementById('input-rep-password').value = '';
+      document.getElementById('input-rep-email').value = '';
+      document.getElementById('create-representative-modal').classList.remove('hidden');
+    }
+
+    // Cierra modal de crear representante
+    function closeCreateRepresentativeModal() {
+      document.getElementById('create-representative-modal').classList.add('hidden');
+    }
+
+    // Crea un nuevo representante en Firebase
+    function createRepresentative() {
+      const nombre = document.getElementById('input-rep-nombre').value.trim();
+      const usuario = document.getElementById('input-rep-usuario').value.trim();
+      const contraseña = document.getElementById('input-rep-password').value.trim();
+      const email = document.getElementById('input-rep-email').value.trim();
+
+      // Validar campos requeridos
+      if (!nombre || !usuario || !contraseña) {
+        mostrarNotificacion('Por favor completa todos los campos requeridos', 'error');
+        return;
+      }
+
+      // Validar longitud mínima del usuario
+      if (usuario.length < 3) {
+        mostrarNotificacion('El usuario debe tener al menos 3 caracteres', 'error');
+        return;
+      }
+
+      // Validar que el usuario no exista
+      if (representantes.some(r => r.usuario === usuario)) {
+        mostrarNotificacion('Este usuario ya existe', 'error');
+        return;
+      }
+
+      const { database, ref, push } = window.firebase;
+
+      // Crear nuevo representante en Firebase
+      const referenciaRepresentantes = ref(database, 'representantes');
+      push(referenciaRepresentantes, {
+        nombre,
+        usuario,
+        email,
+        estado: 'activo',
+        fecha_creacion: new Date().toISOString()
+      }).then(() => {
+        closeCreateRepresentativeModal();
+        mostrarNotificacion(`Representante ${nombre} creado exitosamente`, 'success');
+      }).catch((error) => {
+        console.error('Error al crear representante:', error);
+        mostrarNotificacion('Error al crear el representante', 'error');
+      });
+    }
+
+    // Abre modal para editar un representante
+    function abrirModalEditarRepresentante(representanteId) {
+      representanteEnEdicion = representantes.find(r => r.id === representanteId);
+      if (!representanteEnEdicion) return;
+
+      document.getElementById('edit-rep-nombre').value = representanteEnEdicion.nombre;
+      document.getElementById('edit-rep-email').value = representanteEnEdicion.email;
+      document.getElementById('edit-rep-estado').value = representanteEnEdicion.estado;
+      document.getElementById('edit-representative-modal').classList.remove('hidden');
+    }
+
+    // Cierra modal de editar representante
+    function closeEditRepresentativeModal() {
+      document.getElementById('edit-representative-modal').classList.add('hidden');
+      representanteEnEdicion = null;
+    }
+
+    // Guarda los cambios del representante en Firebase
+    function saveEditRepresentative() {
+      if (!representanteEnEdicion) return;
+
+      const { database, ref, update } = window.firebase;
+
+      const referenciaRepresentante = ref(database, `representantes/${representanteEnEdicion.id}`);
+      update(referenciaRepresentante, {
+        nombre: document.getElementById('edit-rep-nombre').value.trim(),
+        email: document.getElementById('edit-rep-email').value.trim(),
+        estado: document.getElementById('edit-rep-estado').value
+      }).then(() => {
+        closeEditRepresentativeModal();
+        mostrarNotificacion('Representante actualizado', 'success');
+      }).catch((error) => {
+        console.error('Error al actualizar representante:', error);
+        mostrarNotificacion('Error al actualizar el representante', 'error');
+      });
+    }
+
+    // Elimina un representante de Firebase
+    function eliminarRepresentante(representanteId) {
+      const { database, ref, remove } = window.firebase;
+
+      const referenciaRepresentante = ref(database, `representantes/${representanteId}`);
+      remove(referenciaRepresentante)
+        .then(() => {
+          mostrarNotificacion('Representante eliminado', 'success');
+        })
+        .catch((error) => {
+          console.error('Error al eliminar representante:', error);
+          mostrarNotificacion('Error al eliminar el representante', 'error');
+        });
+    }
+
+    // ========== GESTIÓN DE CUENTA ==========
+    // Abre el modal de cuenta del administrador
+    function abrirModalCuenta() {
+      document.getElementById('input-current-pwd').value = '';
+      document.getElementById('input-new-pwd').value = '';
+      document.getElementById('input-confirm-pwd').value = '';
+      document.getElementById('account-modal').classList.remove('hidden');
+    }
+
+    // Cierra el modal de cuenta
+    function closeAccountModal() {
+      document.getElementById('account-modal').classList.add('hidden');
+    }
+
+    // Actualiza la contraseña del administrador en Firebase
+    function updateAdminPassword() {
+      const contraseñaActual = document.getElementById('input-current-pwd').value;
+      const nuevaContraseña = document.getElementById('input-new-pwd').value;
+      const confirmarContraseña = document.getElementById('input-confirm-pwd').value;
+
+      // Validaciones
+      if (!contraseñaActual || !nuevaContraseña || !confirmarContraseña) {
+        mostrarNotificacion('Por favor completa todos los campos', 'error');
+        return;
+      }
+
+      if (contraseñaActual !== adminActual.contraseña) {
+        mostrarNotificacion('La contraseña actual es incorrecta', 'error');
+        return;
+      }
+
+      if (nuevaContraseña.length < 4) {
+        mostrarNotificacion('La nueva contraseña debe tener al menos 4 caracteres', 'error');
+        return;
+      }
+
+      if (nuevaContraseña !== confirmarContraseña) {
+        mostrarNotificacion('Las contraseñas no coinciden', 'error');
+        return;
+      }
+
+      const { database, ref, update } = window.firebase;
+
+      // Actualizar contraseña en Firebase
+      const referenciaAdmin = ref(database, 'admin');
+      update(referenciaAdmin, {
+        contraseña: nuevaContraseña
+      }).then(() => {
+        document.getElementById('input-current-pwd').value = '';
+        document.getElementById('input-new-pwd').value = '';
+        document.getElementById('input-confirm-pwd').value = '';
+        mostrarNotificacion('Contraseña actualizada correctamente', 'success');
+      }).catch((error) => {
+        console.error('Error al actualizar contraseña:', error);
+        mostrarNotificacion('Error al actualizar la contraseña', 'error');
+      });
+    }
+
+    // ========== CIERRE DE SESIÓN ==========
+    // Abre modal de confirmación para cerrar sesión
+    function manejarCierreSesion() {
+      document.getElementById('logout-modal').classList.remove('hidden');
+    }
+
+    // Cierra modal de logout
+    function closeLogoutModal() {
+      document.getElementById('logout-modal').classList.add('hidden');
+    }
+
+    // Confirma el cierre de sesión
+    function confirmLogout() {
+      closeLogoutModal();
+      mostrarNotificacion('Sesión cerrada correctamente', 'success');
+      setTimeout(() => {window.location.href = '../index.html';}, 1800);
+    }
+
+    // ========== NOTIFICACIONES (TOASTS) ==========
+    // Muestra una notificación temporal en la esquina inferior derecha
+    function mostrarNotificacion(mensaje, tipo = 'info') {
+      const contenedor = document.getElementById('toast-container');
+      // Colores según el tipo de notificación
+      const colores = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-blue-500' };
+      // Iconos según el tipo
+      const iconos = { success: '✓', error: '✕', info: 'ℹ' };
+
+      const notificacion = document.createElement('div');
+      notificacion.className = `toast flex items-center gap-3 px-4 py-3 ${colores[tipo]} text-white rounded-xl shadow-lg`;
+      notificacion.innerHTML = `
+        <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">${iconos[tipo]}</span>
+        <span class="font-medium">${mensaje}</span>
+      `;
+
+      contenedor.appendChild(notificacion);
+      // Desaparecer después de 3 segundos
+      setTimeout(() => {
+        notificacion.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => notificacion.remove(), 300);
+      }, 3000);
+    }
+
+    // ========== FUNCIONES AUXILIARES ==========
+    
+    // Escapar HTML para prevenir inyecciones de código
+    function escaparHtml(texto) {
+      const div = document.createElement('div');
+      div.textContent = texto;
+      return div.innerHTML;
+    }
+
+    // Obtener tiempo transcurrido en formato legible (ej: "Hace 2 horas")
+    function obtenerTiempoTranscurrido(fecha) {
+      const ahora = new Date();
+      const diferencia = ahora - fecha;
+      const minutos = Math.floor(diferencia / 60000);
+      const horas = Math.floor(diferencia / 3600000);
+      const dias = Math.floor(diferencia / 86400000);
+
+      if (minutos < 1) return 'Ahora';
+      if (minutos < 60) return `Hace ${minutos} min`;
+      if (horas < 24) return `Hace ${horas}h`;
+      if (dias < 7) return `Hace ${dias}d`;
+      return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+    }
+
+    // ========== GESTIÓN DE TEMAS ==========
+    // Cambia entre tema claro y oscuro
+    function cambiarTema() {
+      temaActual = temaActual === 'dark' ? 'light' : 'dark';
+      aplicarTema();
+      localStorage.setItem('adminTema', temaActual);
+      actualizarBotonTema();
+    }
+
+    // Aplica los estilos del tema actual
+    function aplicarTema() {
+      const tema = temaActual === 'light' ? temaPalido : temaOscuro;
+      
+      if (temaActual === 'light') {
+        document.body.classList.add('light-theme');
+      } else {
+        document.body.classList.remove('light-theme');
+      }
+      
+      document.body.style.backgroundColor = tema.fondo;
+      document.body.style.color = tema.texto;
+    }
+
+    // Actualiza el botón del tema en la UI
+    function actualizarBotonTema() {
+      const iconoTema = document.getElementById('theme-icon');
+      const textoTema = document.getElementById('theme-text');
+      if (temaActual === 'light') {
+        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+        textoTema.textContent = 'Tema Oscuro';
+      } else {
+        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
+        textoTema.textContent = 'Tema Claro';
+      }
+    }
+
+    // Restaurar tema guardado del almacenamiento local
+    const temaBuscado = localStorage.getItem('adminTema');
+    if (temaBuscado) {
+      temaActual = temaBuscado;
+      aplicarTema();
+      actualizarBotonTema();
+    }
+
+    // ========== CERRAR MODALES AL PRESIONAR ESC ==========
+    // Permite cerrar cualquier modal presionando la tecla ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.getElementById('account-modal').classList.add('hidden');
+        document.getElementById('logout-modal').classList.add('hidden');
+        document.getElementById('create-representative-modal').classList.add('hidden');
+        document.getElementById('response-modal').classList.add('hidden');
+        document.getElementById('edit-representative-modal').classList.add('hidden');
+      }
+    });
+
+    // ========== INICIAR APLICACIÓN ==========
+    // Inicia la aplicación cuando el DOM está cargado
+    inicializar();
+  </script> 
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9da466bf213f1741',t:'MTc3MzE2NzUzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
