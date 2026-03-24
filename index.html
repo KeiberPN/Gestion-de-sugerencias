@@ -3,9 +3,8 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Administrativo</title>
+  <title>Sistema de sugerencias</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -150,29 +149,7 @@
     }
   </style>
   <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script><!-- Firebase SDK - Bibliotecas necesarias para conectar con Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, update, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-
-    // Configuración de Firebase - Reemplaza con tus credenciales reales
-    const firebaseConfig = {
-      apiKey: "AIzaSyDzN5xN5xN5xN5xN5xN5xN5xN5xN5xN5xN5x",
-      authDomain: "tu-proyecto.firebaseapp.com",
-      databaseURL: "https://tu-proyecto.firebaseio.com",
-      projectId: "tu-proyecto",
-      storageBucket: "tu-proyecto.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef1234567890"
-    };
-
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    // Exponer Firebase globalmente para que el resto del código pueda acceder
-    window.firebase = { database, ref, onValue, set, push, update, remove };
-  </script>
+  
  </head>
  <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
   <!-- ========== PANTALLA DE LOGIN ========== --> 
@@ -189,11 +166,11 @@
     </div><!-- Formulario de Login -->
     <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-6"><!-- Selector de Rol (Admin/Representante) -->
      <div class="flex gap-3 mb-6">
-      <button onclick="cambiarRolLogin('admin')" id="btn-rol-admin" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-red-500 text-white">
+      <button id="btn-rol-admin" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-red-500 text-white">
        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
        </svg> Administrador </button> 
 
-       <button onclick="cambiarRolLogin('representante')" id="btn-rol-rep" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-slate-700/50 text-slate-300 hover:bg-slate-700">
+       <button id="btn-rol-rep" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-slate-700/50 text-slate-300 hover:bg-slate-700">
        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
        </svg> Representante </button>
      </div><!-- Sección de Login para Administrador -->
@@ -206,7 +183,7 @@
         <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
         <input type="password" id="login-admin-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
       </div>
-      <button onclick="loginAdministrador()" class="w-full py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+      <button id="btnLogin" class="w-full py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
        </svg> Iniciar Sesión </button>
@@ -221,7 +198,7 @@
         <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
         <input type="password" id="login-rep-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
       </div>
-      <button onclick="loginRepresentante()" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+      <button id="btnRep" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
        </svg> Iniciar Sesión </button>
       <p class="text-xs text-slate-500 text-center mt-4">Contacta a tu administrador si no tienes usuario</p>
@@ -232,12 +209,38 @@
     </div>
    </div>
   </div>
-  <script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    // 2. Importa las funciones de la base de datos desde 'firebase-database.js'
+    import { getDatabase, ref, onValue, set, push, update, remove } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBg0PURRFcofrQoEM3nufp0P_Lmge3vlUk",
+      authDomain: "proyecto-miguel-fd1d3.firebaseapp.com",
+      databaseURL: "https://proyecto-miguel-fd1d3-default-rtdb.firebaseio.com",
+      projectId: "proyecto-miguel-fd1d3",
+      storageBucket: "proyecto-miguel-fd1d3.firebasestorage.app",
+      messagingSenderId: "792777770172",
+      appId: "1:792777770172:web:ff1a250061c86dc9f2bcb9"
+    };
+
+    // Initialize Firebase
+    try {
+      const app = initializeApp(firebaseConfig);
+      const database = getDatabase(app);
+
+      window.firebase = { database, ref, onValue, set, push, update, remove };
+
+    } catch (error) {
+      console.error("Error al inicializar Firebase:", error);
+    }
 
     // ========== VARIABLES GLOBALES ==========
     // Arrays para almacenar datos de sugerencias y representantes
-    let todasLasSugerencias = [];
-    let representantes = [];
     let temaActual = 'dark';
     
     // Información del administrador actual
@@ -248,98 +251,8 @@
     let usuarioAutenticado = null;
     let rolAutenticado = null;
 
-    // ========== REFERENCIAS DE FIREBASE ==========
-    // Estas referencias apuntan a las colecciones en la base de datos Firebase
-    let referenciasSugerencias;
-    let referenciasRepresentantes;
-    let referenciaAdmin;
 
-    // ========== PALETAS DE COLORES PARA TEMAS ==========
-    // Paleta de colores para el tema claro
-    const temaPalido = {
-      fondo: '#f8fafc',
-      barraLateral: '#f1f5f9',
-      tarjeta: '#ffffff',
-      texto: '#0f172a',
-      textoSecundario: '#64748b',
-      borde: '#e2e8f0'
-    };
-
-    // Paleta de colores para el tema oscuro (predeterminado)
-    const temaOscuro = {
-      fondo: '#0f172a',
-      barraLateral: '#1e293b',
-      tarjeta: '#1e293b',
-      texto: '#f1f5f9',
-      textoSecundario: '#cbd5e1',
-      borde: '#334155'
-    };
-
-    // ========== CONEXIÓN CON FIREBASE ==========
-    // Esta función establece la conexión con Firebase y carga los datos
-    function conectarFirebase() {
-      // Verificar que Firebase esté disponible
-      if (!window.firebase || !window.firebase.database) {
-        console.error('Firebase no está disponible. Verifica tu configuración.');
-        mostrarNotificacion('Error: No se pudo conectar con Firebase', 'error');
-        return;
-      }
-
-      const { database, ref, onValue } = window.firebase;
-
-      // Crear referencias a las colecciones de Firebase
-      referenciasSugerencias = ref(database, 'sugerencias');
-      referenciasRepresentantes = ref(database, 'representantes');
-      referenciaAdmin = ref(database, 'admin');
-
-      // ========== ESCUCHAR CAMBIOS EN SUGERENCIAS ==========
-      // onValue se dispara cada vez que hay cambios en la base de datos
-      onValue(referenciasSugerencias, (snapshot) => {
-        if (snapshot.exists()) {
-          const datos = snapshot.val();
-          // Convertir el objeto de Firebase en un array
-          todasLasSugerencias = Object.keys(datos).map(id => ({
-            id,
-            ...datos[id]
-          }));
-        } else {
-          todasLasSugerencias = [];
-        }
-        // Actualizar la interfaz cuando cambian los datos
-        actualizarInterfaz();
-      });
-
-      // ========== ESCUCHAR CAMBIOS EN REPRESENTANTES ==========
-      onValue(referenciasRepresentantes, (snapshot) => {
-        if (snapshot.exists()) {
-          const datos = snapshot.val();
-          representantes = Object.keys(datos).map(id => ({
-            id,
-            ...datos[id]
-          }));
-        } else {
-          representantes = [];
-        }
-        // Actualizar lista de representantes
-        actualizarListaRepresentantes();
-        actualizarBadges();
-      });
-
-      // ========== ESCUCHAR CAMBIOS EN DATOS DEL ADMIN ==========
-      onValue(referenciaAdmin, (snapshot) => {
-        if (snapshot.exists()) {
-          adminActual = snapshot.val();
-          // Actualizar la información del admin en la interfaz
-          document.getElementById('admin-name').textContent = adminActual.nombre || 'Administrador';
-          document.getElementById('admin-initials').textContent = adminActual.iniciales || 'AD';
-          document.getElementById('account-name').textContent = adminActual.nombre || 'Administrador';
-          document.getElementById('account-initials').textContent = adminActual.iniciales || 'AD';
-        }
-      });
-
-      mostrarNotificacion('Conectado a Firebase correctamente', 'success');
-    }
-
+    
     
     // ========== NOTIFICACIONES (TOASTS) ==========
     // Muestra una notificación temporal en la esquina inferior derecha
@@ -365,52 +278,10 @@
       }, 3000);
     }
 
-    // ========== GESTIÓN DE TEMAS ==========
-    // Cambia entre tema claro y oscuro
-    function cambiarTema() {
-      temaActual = temaActual === 'dark' ? 'light' : 'dark';
-      aplicarTema();
-      localStorage.setItem('adminTema', temaActual);
-      actualizarBotonTema();
-    }
-
-    // Aplica los estilos del tema actual
-    function aplicarTema() {
-      const tema = temaActual === 'light' ? temaPalido : temaOscuro;
-      
-      if (temaActual === 'light') {
-        document.body.classList.add('light-theme');
-      } else {
-        document.body.classList.remove('light-theme');
-      }
-      
-      document.body.style.backgroundColor = tema.fondo;
-      document.body.style.color = tema.texto;
-    }
-
-    // Actualiza el botón del tema en la UI
-    function actualizarBotonTema() {
-      const iconoTema = document.getElementById('theme-icon');
-      const textoTema = document.getElementById('theme-text');
-      if (temaActual === 'light') {
-        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
-        textoTema.textContent = 'Tema Oscuro';
-      } else {
-        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
-        textoTema.textContent = 'Tema Claro';
-      }
-    }
-
-    // Restaurar tema guardado del almacenamiento local
-    const temaBuscado = localStorage.getItem('adminTema');
-    if (temaBuscado) {
-      temaActual = temaBuscado;
-      aplicarTema();
-      actualizarBotonTema();
-    }
-
     // ========== FUNCIONES DE AUTENTICACIÓN ==========
 
+    document.getElementById("btn-rol-admin").addEventListener("click", () => cambiarRolLogin("admin"));
+    document.getElementById("btn-rol-rep").addEventListener("click", () => cambiarRolLogin("representante"));
     // Cambiar rol en la pantalla de login (Admin o Representante)
     function cambiarRolLogin(rol) {
       const btnAdmin = document.getElementById('btn-rol-admin');
@@ -445,44 +316,53 @@
 
     // ========== LOGIN DEL ADMINISTRADOR ==========
     // Valida las credenciales del administrador contra Firebase
+    document.getElementById("btnLogin").addEventListener("click", loginAdministrador);
     function loginAdministrador() {
       const email = document.getElementById('login-admin-email').value.trim();
       const password = document.getElementById('login-admin-password').value.trim();
 
-      // Validaciones básicas
       if (!email || !password) {
         mostrarToastLogin('Por favor completa todos los campos', 'error');
         return;
       }
 
-      // Validación de email
-      //const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      //if (!regexEmail.test(email)) {
-      //  mostrarToastLogin('Por favor ingresa un email válido', 'error');
-      //  return;
-      //}
+      const db = window.firebase.database;
+      const adminRef = window.firebase.ref(db, 'administradores');
 
-      // Simulamos una validación de credenciales (en producción, consultarías Firebase)
-      // Para este demo: admin@ejemplo.com / password123
-      if (email === 'admin' && password === '123') {
-        // Guardar sesión en localStorage
-        const datosUsuario = {
-          usuario: {
-            nombre: 'Administrador',
-            email: email,
-            iniciales: 'AD'
-          },
-          rol: 'admin'
-        };
-        localStorage.setItem('usuarioAutenticado', JSON.stringify(datosUsuario));
-        usuarioAutenticado = datosUsuario.usuario;
-        rolAutenticado = 'admin';
-        
-        mostrarToastLogin('¡Bienvenido, Administrador!', 'success');
-        setTimeout(mostrarPanelPrincipal, 1000);
-      } else {
-        mostrarToastLogin('Credenciales inválidas', 'error');
-      }
+      window.firebase.onValue(adminRef, (snapshot) => {
+        let encontrado = false;
+
+        snapshot.forEach((childSnapshot) => {
+          const admin = childSnapshot.val();
+
+          if (admin.email === email && admin.contrasena === password) {
+            encontrado = true;
+
+            const datosUsuario = {
+              usuario: {
+                id: childSnapshot.key,
+                nombre: admin.nombre,
+                email: admin.email,
+                iniciales: admin.nombre.substring(0, 2).toUpperCase()
+              },
+              rol: admin.rol // "administrador" o "director"
+            };
+
+            localStorage.setItem('usuarioAutenticado', JSON.stringify(datosUsuario));
+
+            mostrarToastLogin(`¡Bienvenido, ${admin.nombre}!`, 'success');
+
+            setTimeout(mostrarPanelPrincipal, 1000);
+          }
+        });
+
+        if (!encontrado) {
+          mostrarToastLogin('Credenciales inválidas', 'error');
+        }
+
+      }, {
+        onlyOnce: true // 🔥 importante para que no escuche cambios en tiempo real
+      });
     }
 
     function mostrarPanelPrincipal() {
@@ -490,12 +370,13 @@
     }
 
     // ========== LOGIN DEL REPRESENTANTE ==========
+    document.getElementById("btnRep").addEventListener("click", loginRepresentante);
     // Valida las credenciales del representante contra la lista de Firebase
     function loginRepresentante() {
       const usuario = document.getElementById('login-rep-usuario').value.trim();
       const password = document.getElementById('login-rep-password').value.trim();
 
-      // Validaciones básicas
+      // Validaciones
       if (!usuario || !password) {
         mostrarToastLogin('Por favor completa todos los campos', 'error');
         return;
@@ -506,34 +387,45 @@
         return;
       }
 
-      // Buscar representante en la lista (simulado con array local)
-      // En producción, consultarías Firebase
-      //const repEncontrado = representantes.find(r => r.usuario === usuario);
+      const db = window.firebase.database;
+      const refRep = window.firebase.ref(db, 'representantes');
 
-      //if (!repEncontrado) {
-        //mostrarToastLogin('Usuario no encontrado', 'error');
-        //return;
-      //}
+      onValue(refRep, (snapshot) => {
+        let encontrado = false;
 
-      if (usuario == "admin" && password == "123") { 
+        snapshot.forEach((childSnapshot) => {
+          const rep = childSnapshot.val();
 
-        // Guardar sesión en localStorage
-        //const datosUsuario = {
-        //  usuario: {
-        //    nombre: repEncontrado.nombre,
-        //    usuario: repEncontrado.usuario,
-        //    id: repEncontrado.id
-        //  },
-        //  rol: 'representante'
-        //};
-        //localStorage.setItem('usuarioAutenticado', JSON.stringify(datosUsuario));
-        //usuarioAutenticado = datosUsuario.usuario;
-        rolAutenticado = 'representante';
-        
-        mostrarToastLogin(`¡Bienvenido, ${usuario}!`, 'success');
-        setTimeout(() => {window.location.href = 'html/panel_usuario.html';}, 1000);
-      }
-    }
+          // ⚠️ aquí puedes usar email o usuario según tu estructura
+          if (rep.email === usuario && rep.contrasena === password) {
+            encontrado = true;
+
+            const datosUsuario = {
+              usuario: {
+                id: childSnapshot.key,
+                nombre: rep.nombre,
+                email: rep.email,
+                iniciales: rep.nombre.substring(0, 2).toUpperCase()
+              },
+              rol: 'representante'
+            };
+
+            localStorage.setItem('usuarioAutenticado', JSON.stringify(datosUsuario));
+
+            mostrarToastLogin(`¡Bienvenido, ${rep.nombre}!`, 'success');
+
+            setTimeout(() => {
+              window.location.href = 'html/panel_usuario.html';
+            }, 1000);
+          }
+        });
+
+        if (!encontrado) {
+          mostrarToastLogin('Credenciales inválidas', 'error');
+        }
+
+      }, { onlyOnce: true });
+    };
 
 
     // ========== TOAST PARA PANTALLA DE LOGIN ==========
@@ -557,24 +449,7 @@
       }, 3000);
     }
 
-    // ========== CERRAR SESIÓN ==========
-    // Limpia los datos de sesión y vuelve a la pantalla de login
-    function cerrarSesion() {
-      localStorage.removeItem('usuarioAutenticado');
-      usuarioAutenticado = null;
-      rolAutenticado = null;
-      
-      document.getElementById('app').classList.add('hidden');
-      document.getElementById('login-screen').classList.remove('hidden');
-      
-      // Limpiar campos de login
-      document.getElementById('login-admin-email').value = '';
-      document.getElementById('login-admin-password').value = '';
-      document.getElementById('login-rep-usuario').value = '';
-      document.getElementById('login-rep-password').value = '';
-      
-      mostrarToastLogin('Sesión cerrada correctamente', 'success');
-    }
+    
 
     // ========== CERRAR MODALES AL PRESIONAR ESC ==========
     // Permite cerrar cualquier modal presionando la tecla ESC
