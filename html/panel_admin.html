@@ -927,7 +927,6 @@
                 <div>
                   <h3 class="font-bold text-white">${escaparHtml(r.nombre)}</h3>
                   <p class="text-sm text-slate-400">@${escaparHtml(r.usuario)}</p>
-                  <p class="text-xs text-slate-500">${r.email}</p>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -1127,7 +1126,7 @@
 
     // ========== GESTIÓN DE REPRESENTANTES ==========
     // Abre modal para crear un nuevo representante
-    function openCreateRepresentativeModal() {
+    window.openCreateRepresentativeModal = function() {
       document.getElementById('input-rep-nombre').value = '';
       document.getElementById('input-rep-usuario').value = '';
       document.getElementById('input-rep-password').value = '';
@@ -1136,12 +1135,12 @@
     }
 
     // Cierra modal de crear representante
-    function closeCreateRepresentativeModal() {
+    window.closeCreateRepresentativeModal = function() {
       document.getElementById('create-representative-modal').classList.add('hidden');
     }
 
     // Crea un nuevo representante en Firebase
-    function createRepresentative() {
+    window.createRepresentative = function() {
       const nombreInput = document.getElementById('input-rep-nombre');
       const usuarioInput = document.getElementById('input-rep-usuario');
       const passwordInput = document.getElementById('input-rep-password');
@@ -1211,24 +1210,23 @@
     }
 
     // Abre modal para editar un representante
-    function abrirModalEditarRepresentante(representanteId) {
+    window.abrirModalEditarRepresentante = function(representanteId) {
       representanteEnEdicion = representantes.find(r => r.id === representanteId);
       if (!representanteEnEdicion) return;
 
       document.getElementById('edit-rep-nombre').value = representanteEnEdicion.nombre;
-      document.getElementById('edit-rep-email').value = representanteEnEdicion.email;
       document.getElementById('edit-rep-estado').value = representanteEnEdicion.estado;
       document.getElementById('edit-representative-modal').classList.remove('hidden');
     }
 
     // Cierra modal de editar representante
-    function closeEditRepresentativeModal() {
+    window.closeEditRepresentativeModal = function() {
       document.getElementById('edit-representative-modal').classList.add('hidden');
       representanteEnEdicion = null;
     }
 
     // Guarda los cambios del representante en Firebase
-    function saveEditRepresentative() {
+    window.saveEditRepresentative = function() {
       if (!representanteEnEdicion) return;
 
       const nombreInput = document.getElementById('edit-rep-nombre');
