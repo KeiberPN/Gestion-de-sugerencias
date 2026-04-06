@@ -343,6 +343,7 @@
                 id: childSnapshot.key,
                 nombre: admin.nombre,
                 email: admin.email,
+                contrasena: admin.contrasena,
                 iniciales: admin.nombre.substring(0, 2).toUpperCase()
               },
               rol: admin.rol // "administrador" o "director"
@@ -352,7 +353,7 @@
 
             mostrarToastLogin(`¡Bienvenido, ${admin.nombre}!`, 'success');
 
-            setTimeout(mostrarPanelPrincipal, 1000);
+            setTimeout(mostrarPanelPrincipal, 200);
           }
         });
 
@@ -416,7 +417,7 @@
 
             setTimeout(() => {
               window.location.href = 'html/panel_usuario.html';
-            }, 1000);
+            }, 200);
           }
         });
 

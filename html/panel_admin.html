@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" class="h-full">
+<html lang="es" class="h-full" class="dark">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -148,31 +148,80 @@
       background-color: #f8fafc;
       color: #0f172a;
     }
+
+
+
+
+  /* Tema claro */
+.light-theme {
+  background-color: #f1f5f9; /* gris claro suave */
+  color: #1e293b;
+}
+
+/* Sobrescribir Tailwind en modo claro */
+.light-theme .bg-slate-900,
+.light-theme .bg-slate-800,
+.light-theme .bg-slate-800\/50,
+.light-theme .bg-slate-700\/30,
+.light-theme .bg-slate-700\/50 {
+  background-color: #ffffff !important;
+}
+
+.light-theme .text-white {
+  color: #1e293b !important;
+}
+
+.light-theme .text-slate-300,
+.light-theme .text-slate-400 {
+  color: #475569 !important;
+}
+
+.light-theme .border-slate-700,
+.light-theme .border-slate-700\/50,
+.light-theme .border-slate-600\/50 {
+  border-color: #e2e8f0 !important;
+}    
+
+.light-theme #sidebar {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light-theme main {
+  background-color: #f1f5f9;
+}
+
+.light-theme .stat-card,
+.light-theme .card-hover {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+
+
+.light-theme .card-hover:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.light-theme .text-white {
+  color: #0f172a !important;
+}
+
+.light-theme .text-slate-400 {
+  color: #64748b !important;
+}
+
+.light-theme input,
+.light-theme select,
+.light-theme textarea {
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+  border-color: #e2e8f0 !important;
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script><!-- Firebase SDK - Bibliotecas necesarias para conectar con Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, update, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
-
-    // Configuración de Firebase - Reemplaza con tus credenciales reales
-    const firebaseConfig = {
-      apiKey: "AIzaSyDzN5xN5xN5xN5xN5xN5xN5xN5xN5xN5xN5x",
-      authDomain: "tu-proyecto.firebaseapp.com",
-      databaseURL: "https://tu-proyecto.firebaseio.com",
-      projectId: "tu-proyecto",
-      storageBucket: "tu-proyecto.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef1234567890"
-    };
-
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    // Exponer Firebase globalmente para que el resto del código pueda acceder
-    window.firebase = { database, ref, onValue, set, push, update, remove };
-  </script>
  </head>
  <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
   <div id="app" class="h-full w-full flex">
@@ -313,7 +362,7 @@
        <p class="text-slate-400">Revisa y responde todas las sugerencias de los representantes</p>
       </div>
       <div class="mb-6 flex flex-col md:flex-row gap-3">
-       <select id="filter-estado-sugerencias" onchange="applyFilters()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todos los estados</option> <option value="pendiente">Pendiente</option> <option value="en_revision">En Revisión</option> <option value="respondida">Respondida</option> <option value="aprobada">Aprobada</option> <option value="rechazada">Rechazada</option> </select> <select id="filter-prioridad" onchange="applyFilters()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todas las prioridades</option> <option value="alta">Alta</option> <option value="media">Media</option> <option value="baja">Baja</option> </select> <input type="text" id="search-sugerencias" placeholder="Buscar sugerencia..." onkeyup="applyFilters()" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50">
+       <select id="filter-estado-sugerencias" onchange="aplicarFiltros()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todos los estados</option> <option value="pendiente">Pendiente</option> <option value="en_revision">En Revisión</option> <option value="respondida">Respondida</option> <option value="aprobada">Aprobada</option> <option value="rechazada">Rechazada</option> </select> <select id="filter-prioridad" onchange="aplicarFiltros()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todas las prioridades</option> <option value="alta">Alta</option> <option value="media">Media</option> <option value="baja">Baja</option> </select> <input type="text" id="search-sugerencias" placeholder="Buscar sugerencia..." onkeyup="aplicarFiltros()" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50">
       </div>
       <div id="sugerencias-list" class="space-y-4">
        <div class="text-center py-16 text-slate-500">
@@ -365,8 +414,10 @@
       </div>
      </section>
     </div>
-   </main><!-- Toast Container -->
-   <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Logout Modal -->
+   </main>
+   <!-- Toast Container -->
+   <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+   <!-- Logout Modal -->
    <div id="logout-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-sm w-full">
      <div class="text-center">
@@ -384,6 +435,7 @@
     </div>
    </div><!-- Account Modal -->
    <div id="account-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+    <div id="toast-container2" class="fixed top-4 right-4 z-50 space-y-2"></div>
     <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-md w-full my-4">
      <div class="flex items-center justify-between mb-6">
       <h3 class="text-2xl font-bold text-white">Mi Cuenta</h3><button onclick="closeAccountModal()" class="text-slate-400 hover:text-white">
@@ -471,11 +523,17 @@
       <div>
        <label class="block text-sm font-medium text-slate-300 mb-2">Nuevo Estado *</label> <select id="response-new-estado" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="en_revision">En Revisión</option> <option value="respondida">Respondida</option> <option value="aprobada">Aprobada</option> <option value="rechazada">Rechazada</option> </select>
       </div>
+
+      <div id="response-preview" class="hidden p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg mb-3">
+        <p class="text-xs text-emerald-400 mb-1">Respuesta actual</p>
+        <p id="response-preview-text" class="text-sm text-white"></p>
+      </div>
+
       <div>
        <label class="block text-sm font-medium text-slate-300 mb-2">Tu Respuesta *</label> <textarea id="response-text" rows="4" placeholder="Escribe tu respuesta aquí..." class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"></textarea>
       </div>
       <div class="flex gap-3">
-       <button onclick="closeResponseModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="sendResponse()" id="response-send-btn" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Enviar</button>
+       <button onclick="closeResponseModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="enviarRespuesta()" id="response-send-btn" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Enviar</button>
       </div>
      </div>
     </div>
@@ -505,7 +563,36 @@
     </div>
    </div>
   </div>
-  <script>
+  <script type="module">
+
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    // 2. Importa las funciones de la base de datos desde 'firebase-database.js'
+    import { getDatabase, ref, onValue, set, push, update, remove } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBg0PURRFcofrQoEM3nufp0P_Lmge3vlUk",
+      authDomain: "proyecto-miguel-fd1d3.firebaseapp.com",
+      databaseURL: "https://proyecto-miguel-fd1d3-default-rtdb.firebaseio.com",
+      projectId: "proyecto-miguel-fd1d3",
+      storageBucket: "proyecto-miguel-fd1d3.firebasestorage.app",
+      messagingSenderId: "792777770172",
+      appId: "1:792777770172:web:ff1a250061c86dc9f2bcb9"
+    };
+    let db;
+    let deleteTarget = null;
+    // Initialize Firebase
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+
+    } catch (error) {
+      console.error("Error al inicializar Firebase:", error);
+    }
+
     // ========== CONFIGURACIÓN INICIAL ==========
     // Configuración predeterminada para los textos editables del panel
     const configuracionPredeterminada = {
@@ -520,7 +607,7 @@
     let temaActual = 'dark';
     
     // Información del administrador actual
-    let adminActual = { nombre: 'Administrador', iniciales: 'AD', contraseña: 'admin123' };
+    let adminActual = JSON.parse(localStorage.getItem("usuarioAutenticado"));
     let sugerenciaSeleccionada = null;
     let representanteEnEdicion = null;
 
@@ -588,26 +675,13 @@
     // ========== CONEXIÓN CON FIREBASE ==========
     // Esta función establece la conexión con Firebase y carga los datos
     function conectarFirebase() {
-      // Verificar que Firebase esté disponible
-      if (!window.firebase || !window.firebase.database) {
-        console.error('Firebase no está disponible. Verifica tu configuración.');
-        mostrarNotificacion('Error: No se pudo conectar con Firebase', 'error');
-        return;
-      }
+      referenciasSugerencias = ref(db, 'sugerencias');
+      referenciasRepresentantes = ref(db, 'representantes');
+      //referenciaAdmin = ref(db, 'admin');
 
-      const { database, ref, onValue } = window.firebase;
-
-      // Crear referencias a las colecciones de Firebase
-      referenciasSugerencias = ref(database, 'sugerencias');
-      referenciasRepresentantes = ref(database, 'representantes');
-      referenciaAdmin = ref(database, 'admin');
-
-      // ========== ESCUCHAR CAMBIOS EN SUGERENCIAS ==========
-      // onValue se dispara cada vez que hay cambios en la base de datos
       onValue(referenciasSugerencias, (snapshot) => {
         if (snapshot.exists()) {
           const datos = snapshot.val();
-          // Convertir el objeto de Firebase en un array
           todasLasSugerencias = Object.keys(datos).map(id => ({
             id,
             ...datos[id]
@@ -615,11 +689,9 @@
         } else {
           todasLasSugerencias = [];
         }
-        // Actualizar la interfaz cuando cambian los datos
         actualizarInterfaz();
       });
 
-      // ========== ESCUCHAR CAMBIOS EN REPRESENTANTES ==========
       onValue(referenciasRepresentantes, (snapshot) => {
         if (snapshot.exists()) {
           const datos = snapshot.val();
@@ -630,29 +702,35 @@
         } else {
           representantes = [];
         }
-        // Actualizar lista de representantes
         actualizarListaRepresentantes();
         actualizarBadges();
+        actualizarActividadReciente();
+        actualizarListaSugerencias()
+        actualizarEstadisticasGenerales()
       });
 
-      // ========== ESCUCHAR CAMBIOS EN DATOS DEL ADMIN ==========
-      onValue(referenciaAdmin, (snapshot) => {
-        if (snapshot.exists()) {
-          adminActual = snapshot.val();
-          // Actualizar la información del admin en la interfaz
-          document.getElementById('admin-name').textContent = adminActual.nombre || 'Administrador';
-          document.getElementById('admin-initials').textContent = adminActual.iniciales || 'AD';
-          document.getElementById('account-name').textContent = adminActual.nombre || 'Administrador';
-          document.getElementById('account-initials').textContent = adminActual.iniciales || 'AD';
-        }
-      });
+      //onValue(referenciaAdmin, (snapshot) => {
+      //  if (snapshot.exists()) {
+      //    adminActual = snapshot.val();
+      //    document.getElementById('admin-name').textContent = adminActual.nombre || 'Administrador';
+      //    document.getElementById('admin-initials').textContent = adminActual.iniciales || 'AD';
+      //    document.getElementById('account-name').textContent = adminActual.nombre || 'Administrador';
+      //    document.getElementById('account-initials').textContent = adminActual.iniciales || 'AD';
+      //  }
+      //});
+
+      document.getElementById('admin-name').textContent = adminActual.usuario.nombre || 'Administrador';
+      document.getElementById('admin-initials').textContent = adminActual.usuario.iniciales || 'AD';
+      document.getElementById('account-name').textContent = adminActual.usuario.nombre || 'Administrador';
+      document.getElementById('account-initials').textContent = adminActual.iniciales || 'AD';
+      
 
       mostrarNotificacion('Conectado a Firebase correctamente', 'success');
     }
 
     // ========== MOSTRAR SECCIÓN ==========
     // Función para navegar entre diferentes secciones del panel
-    function mostrarSeccion(seccion) {
+    window.mostrarSeccion = function(seccion) {
       // Ocultar todas las secciones
       document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'));
       document.getElementById(`section-${seccion}`).classList.remove('hidden');
@@ -704,8 +782,9 @@
     // Muestra las últimas 5 sugerencias en la sección de actividad
     function actualizarActividadReciente() {
       const contenedor = document.getElementById('recent-activity');
+
       const recientes = [...todasLasSugerencias]
-        .sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion))
+        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
         .slice(0, 5);
 
       if (recientes.length === 0) {
@@ -715,14 +794,28 @@
 
       contenedor.innerHTML = recientes.map(s => {
         const estado = configuracionEstados[s.estado] || configuracionEstados.pendiente;
-        const fecha = new Date(s.fecha_creacion);
+
+        const fecha = new Date(s.fecha);
         const tiempoTranscurrido = obtenerTiempoTranscurrido(fecha);
+
+        // 🔥 Buscar representante correctamente
+        let representanteReciente = representantes.find(r => r.id === s.autorId);
+
+        // 🔥 Obtener nombre o fallback
+        let nombreRepresentante = representanteReciente
+          ? representanteReciente.nombre
+          : 'Desconocido';
+
+        console.log(nombreRepresentante)
+
         return `
           <div class="flex items-center gap-4 p-4 bg-slate-700/30 rounded-xl">
             <div class="text-2xl">${estado.icono}</div>
             <div class="flex-1 min-w-0">
               <p class="font-medium text-white truncate">${escaparHtml(s.titulo)}</p>
-              <p class="text-sm text-slate-400">por ${escaparHtml(s.autor_nombre || 'Desconocido')}</p>
+              <p class="text-sm text-slate-400">
+                por ${escaparHtml(nombreRepresentante || 'Desconocido')}
+              </p>
             </div>
             <div class="text-right">
               <p class="text-xs text-slate-500">${tiempoTranscurrido}</p>
@@ -751,7 +844,7 @@
       }
       if (textoBusqueda) {
         filtradas = filtradas.filter(s => 
-          s.titulo.toLowerCase().includes(textoBusqueda) || 
+          (s.titulo || '').toLowerCase().includes(textoBusqueda) || 
           s.descripcion.toLowerCase().includes(textoBusqueda)
         );
       }
@@ -767,6 +860,15 @@
       contenedor.innerHTML = filtradas.map((s, indice) => {
         const estado = configuracionEstados[s.estado] || configuracionEstados.pendiente;
         const prioridad = configuracionPrioridades[s.prioridad] || configuracionPrioridades.baja;
+
+        // 🔥 Buscar representante correctamente
+        let representanteReciente = representantes.find(r => r.id === s.autorId);
+
+        // 🔥 Obtener nombre o fallback
+        let nombreRepresentante = representanteReciente
+          ? representanteReciente.nombre
+          : 'Desconocido';
+
         return `
           <div class="card-hover bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
             <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -776,12 +878,22 @@
                   <h3 class="text-lg font-bold text-white">${escaparHtml(s.titulo)}</h3>
                 </div>
                 <p class="text-slate-400 mb-4 line-clamp-2">${escaparHtml(s.descripcion)}</p>
+                ${
+                  s.respuesta 
+                  ? `
+                    <div class="mt-3 mb-3 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                      <p class="text-xs text-emerald-400 mb-1">Respuesta del administrador</p>
+                      <p class="text-sm text-white">${escaparHtml(s.respuesta)}</p>
+                    </div>
+                  `
+                  : ''
+                }
                 <div class="flex flex-wrap gap-2 mb-4">
                   <span class="px-3 py-1 text-xs font-medium rounded-lg bg-slate-700/50 text-slate-300">${etiquetasCategorias[s.categoria] || s.categoria}</span>
                   <span class="px-3 py-1 text-xs font-medium rounded-lg bg-${estado.color}-500/20 text-${estado.color}-400">${estado.etiqueta}</span>
                   <span class="px-3 py-1 text-xs font-medium rounded-lg bg-${prioridad.color}-500/20 text-${prioridad.color}-400">${prioridad.icono} ${prioridad.etiqueta}</span>
                 </div>
-                <p class="text-sm text-slate-400">De: <span class="font-medium text-white">${escaparHtml(s.autor_nombre || 'Desconocido')}</span></p>
+                <p class="text-sm text-slate-400">De: <span class="font-medium text-white">${escaparHtml(nombreRepresentante || 'Desconocido')}</span></p>
               </div>
               <button onclick="abrirModalRespuesta('${s.id}')" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">
                 Responder
@@ -903,11 +1015,20 @@
 
       // ========== REPRESENTANTES DESTACADOS ==========
       const porRep = {};
+
       todasLasSugerencias.forEach(s => {
-        porRep[s.autor_nombre || 'Desconocido'] = (porRep[s.autor_nombre || 'Desconocido'] || 0) + 1;
+        // 🔥 Buscar el representante por ID
+        const rep = representantes.find(r => r.id === s.autorId);
+
+        // 🔥 Obtener nombre o fallback
+        const nombre = rep ? rep.nombre : 'Desconocido';
+
+        // 🔥 Contar
+        porRep[nombre] = (porRep[nombre] || 0) + 1;
       });
 
       const contenedorRep = document.getElementById('stats-representantes');
+
       if (Object.keys(porRep).length === 0) {
         contenedorRep.innerHTML = '<p class="text-slate-500 text-center py-8">Sin datos</p>';
       } else {
@@ -918,7 +1039,9 @@
             return `
               <div class="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg">
                 <span class="text-slate-300">${escaparHtml(rep)}</span>
-                <span class="px-3 py-1 text-sm font-semibold rounded-lg bg-red-500/20 text-red-400">${cantidad} sugerencias</span>
+                <span class="px-3 py-1 text-sm font-semibold rounded-lg bg-red-500/20 text-red-400">
+                  ${cantidad} sugerencias
+                </span>
               </div>
             `;
           }).join('');
@@ -927,13 +1050,13 @@
 
     // ========== APLICAR FILTROS ==========
     // Se ejecuta cuando el usuario cambia los filtros de búsqueda
-    function applyFilters() {
+    window.aplicarFiltros = function() {
       actualizarListaSugerencias();
     }
 
     // ========== MODAL DE RESPUESTA ==========
     // Abre el modal para responder a una sugerencia específica
-    function abrirModalRespuesta(sugerenciaId) {
+    window.abrirModalRespuesta = function(sugerenciaId) {
       sugerenciaSeleccionada = todasLasSugerencias.find(s => s.id === sugerenciaId);
       if (!sugerenciaSeleccionada) return;
 
@@ -945,42 +1068,61 @@
       document.getElementById('response-text').value = '';
       document.getElementById('response-new-estado').value = 'respondida';
 
+      const preview = document.getElementById('response-preview');
+      const previewText = document.getElementById('response-preview-text');
+
+      if (sugerenciaSeleccionada.respuesta) {
+        preview.classList.remove('hidden');
+        previewText.textContent = sugerenciaSeleccionada.respuesta;
+      } else {
+        preview.classList.add('hidden');
+      }
+
       document.getElementById('response-modal').classList.remove('hidden');
     }
 
     // Cierra el modal de respuesta
-    function closeResponseModal() {
+    window.closeResponseModal = function() {
       document.getElementById('response-modal').classList.add('hidden');
       sugerenciaSeleccionada = null;
     }
 
     // Envía la respuesta a Firebase
-    function sendResponse() {
+    window.enviarRespuesta = function() {
       if (!sugerenciaSeleccionada) return;
 
       const nuevoEstado = document.getElementById('response-new-estado').value;
-      const respuesta = document.getElementById('response-text').value.trim();
+      const respuestaInput = document.getElementById('response-text');
+      const respuesta = respuestaInput.value.trim();
 
+      // Validación
       if (!respuesta) {
         mostrarNotificacion('Por favor escribe una respuesta', 'error');
+        respuestaInput.focus();
         return;
       }
 
-      const { database, ref, update } = window.firebase;
+      try {
+        const referenciaSugerencia = ref(db, `sugerencias/${sugerenciaSeleccionada.id}`);
 
-      // Actualizar la sugerencia en Firebase
-      const referenciaSugerencia = ref(database, `sugerencias/${sugerenciaSeleccionada.id}`);
-      update(referenciaSugerencia, {
-        estado: nuevoEstado,
-        respuesta: respuesta,
-        fecha_actualizacion: new Date().toISOString()
-      }).then(() => {
-        mostrarNotificacion('Respuesta enviada correctamente', 'success');
-        closeResponseModal();
-      }).catch((error) => {
-        console.error('Error al enviar respuesta:', error);
-        mostrarNotificacion('Error al enviar la respuesta', 'error');
-      });
+        update(referenciaSugerencia, {
+          estado: nuevoEstado,
+          respuesta: respuesta,
+          fecha_actualizacion: new Date().toISOString()
+        })
+        .then(() => {
+          mostrarNotificacion('Respuesta enviada correctamente', 'success');
+          closeResponseModal();
+        })
+        .catch((error) => {
+          console.error('Error al enviar respuesta:', error);
+          mostrarNotificacion('Error al enviar la respuesta', 'error');
+        });
+
+      } catch (error) {
+        console.error('Error inesperado:', error);
+        mostrarNotificacion('Error inesperado', 'error');
+      }
     }
 
     // ========== GESTIÓN DE REPRESENTANTES ==========
@@ -1000,46 +1142,72 @@
 
     // Crea un nuevo representante en Firebase
     function createRepresentative() {
-      const nombre = document.getElementById('input-rep-nombre').value.trim();
-      const usuario = document.getElementById('input-rep-usuario').value.trim();
-      const contraseña = document.getElementById('input-rep-password').value.trim();
-      const email = document.getElementById('input-rep-email').value.trim();
+      const nombreInput = document.getElementById('input-rep-nombre');
+      const usuarioInput = document.getElementById('input-rep-usuario');
+      const passwordInput = document.getElementById('input-rep-password');
+      const emailInput = document.getElementById('input-rep-email');
 
-      // Validar campos requeridos
+      const nombre = nombreInput.value.trim();
+      const usuario = usuarioInput.value.trim().toLowerCase();
+      const contraseña = passwordInput.value.trim();
+      const email = emailInput.value.trim();
+
+      // Validación básica
       if (!nombre || !usuario || !contraseña) {
         mostrarNotificacion('Por favor completa todos los campos requeridos', 'error');
         return;
       }
 
-      // Validar longitud mínima del usuario
       if (usuario.length < 3) {
         mostrarNotificacion('El usuario debe tener al menos 3 caracteres', 'error');
+        usuarioInput.focus();
         return;
       }
 
-      // Validar que el usuario no exista
-      if (representantes.some(r => r.usuario === usuario)) {
+      // Verificar duplicado (case insensitive)
+      if (representantes.some(r => (r.usuario || '').toLowerCase() === usuario)) {
         mostrarNotificacion('Este usuario ya existe', 'error');
+        usuarioInput.focus();
         return;
       }
 
-      const { database, ref, push } = window.firebase;
+      const btn = document.querySelector('#create-representative-modal button:last-child');
+      btn.disabled = true;
 
-      // Crear nuevo representante en Firebase
-      const referenciaRepresentantes = ref(database, 'representantes');
-      push(referenciaRepresentantes, {
-        nombre,
-        usuario,
-        email,
-        estado: 'activo',
-        fecha_creacion: new Date().toISOString()
-      }).then(() => {
-        closeCreateRepresentativeModal();
-        mostrarNotificacion(`Representante ${nombre} creado exitosamente`, 'success');
-      }).catch((error) => {
-        console.error('Error al crear representante:', error);
-        mostrarNotificacion('Error al crear el representante', 'error');
-      });
+      try {
+        const referenciaRepresentantes = ref(db, 'representantes');
+
+        push(referenciaRepresentantes, {
+          nombre,
+          usuario,
+          email,
+          estado: 'activo',
+          fecha_creacion: new Date().toISOString()
+          // ⚠️ Nota: no guardo contraseña (ver explicación abajo)
+        })
+        .then(() => {
+          // Limpiar inputs
+          nombreInput.value = '';
+          usuarioInput.value = '';
+          passwordInput.value = '';
+          emailInput.value = '';
+
+          closeCreateRepresentativeModal();
+          mostrarNotificacion(`Representante ${nombre} creado exitosamente`, 'success');
+        })
+        .catch((error) => {
+          console.error('Error al crear representante:', error);
+          mostrarNotificacion('Error al crear el representante', 'error');
+        })
+        .finally(() => {
+          btn.disabled = false;
+        });
+
+      } catch (error) {
+        console.error('Error inesperado:', error);
+        mostrarNotificacion('Error inesperado', 'error');
+        btn.disabled = false;
+      }
     }
 
     // Abre modal para editar un representante
@@ -1063,40 +1231,87 @@
     function saveEditRepresentative() {
       if (!representanteEnEdicion) return;
 
-      const { database, ref, update } = window.firebase;
+      const nombreInput = document.getElementById('edit-rep-nombre');
+      const emailInput = document.getElementById('edit-rep-email');
+      const estadoInput = document.getElementById('edit-rep-estado');
 
-      const referenciaRepresentante = ref(database, `representantes/${representanteEnEdicion.id}`);
-      update(referenciaRepresentante, {
-        nombre: document.getElementById('edit-rep-nombre').value.trim(),
-        email: document.getElementById('edit-rep-email').value.trim(),
-        estado: document.getElementById('edit-rep-estado').value
-      }).then(() => {
-        closeEditRepresentativeModal();
-        mostrarNotificacion('Representante actualizado', 'success');
-      }).catch((error) => {
-        console.error('Error al actualizar representante:', error);
-        mostrarNotificacion('Error al actualizar el representante', 'error');
-      });
+      const nombre = nombreInput.value.trim();
+      const email = emailInput.value.trim();
+      const estado = estadoInput.value;
+
+      // Validación básica
+      if (!nombre) {
+        mostrarNotificacion('El nombre no puede estar vacío', 'error');
+        nombreInput.focus();
+        return;
+      }
+
+      const btn = document.querySelector('#edit-representative-modal button:last-child');
+      btn.disabled = true;
+
+      try {
+        const referenciaRepresentante = ref(db, `representantes/${representanteEnEdicion.id}`);
+
+        update(referenciaRepresentante, {
+          nombre,
+          email,
+          estado
+        })
+        .then(() => {
+          closeEditRepresentativeModal();
+          mostrarNotificacion('Representante actualizado', 'success');
+        })
+        .catch((error) => {
+          console.error('Error al actualizar representante:', error);
+          mostrarNotificacion('Error al actualizar el representante', 'error');
+        })
+        .finally(() => {
+          btn.disabled = false;
+        });
+
+      } catch (error) {
+        console.error('Error inesperado:', error);
+        mostrarNotificacion('Error inesperado', 'error');
+        btn.disabled = false;
+      }
     }
 
     // Elimina un representante de Firebase
     function eliminarRepresentante(representanteId) {
-      const { database, ref, remove } = window.firebase;
+      if (!representanteId) return;
 
-      const referenciaRepresentante = ref(database, `representantes/${representanteId}`);
-      remove(referenciaRepresentante)
-        .then(() => {
-          mostrarNotificacion('Representante eliminado', 'success');
-        })
-        .catch((error) => {
-          console.error('Error al eliminar representante:', error);
-          mostrarNotificacion('Error al eliminar el representante', 'error');
-        });
+      // Confirmación antes de eliminar
+      const confirmar = confirm('¿Seguro que deseas eliminar este representante?');
+      if (!confirmar) return;
+
+      const btns = document.querySelectorAll(`button[onclick="eliminarRepresentante('${representanteId}')"]`);
+      btns.forEach(btn => btn.disabled = true);
+
+      try {
+        const referenciaRepresentante = ref(db, `representantes/${representanteId}`);
+
+        remove(referenciaRepresentante)
+          .then(() => {
+            mostrarNotificacion('Representante eliminado', 'success');
+          })
+          .catch((error) => {
+            console.error('Error al eliminar representante:', error);
+            mostrarNotificacion('Error al eliminar el representante', 'error');
+          })
+          .finally(() => {
+            btns.forEach(btn => btn.disabled = false);
+          });
+
+      } catch (error) {
+        console.error('Error inesperado:', error);
+        mostrarNotificacion('Error inesperado', 'error');
+        btns.forEach(btn => btn.disabled = false);
+      }
     }
 
     // ========== GESTIÓN DE CUENTA ==========
     // Abre el modal de cuenta del administrador
-    function abrirModalCuenta() {
+    window.abrirModalCuenta = function() {
       document.getElementById('input-current-pwd').value = '';
       document.getElementById('input-new-pwd').value = '';
       document.getElementById('input-confirm-pwd').value = '';
@@ -1104,67 +1319,95 @@
     }
 
     // Cierra el modal de cuenta
-    function closeAccountModal() {
+    window.closeAccountModal = function() {
       document.getElementById('account-modal').classList.add('hidden');
     }
 
     // Actualiza la contraseña del administrador en Firebase
-    function updateAdminPassword() {
-      const contraseñaActual = document.getElementById('input-current-pwd').value;
-      const nuevaContraseña = document.getElementById('input-new-pwd').value;
-      const confirmarContraseña = document.getElementById('input-confirm-pwd').value;
+    window.updateAdminPassword = function() {
+      const currentInput = document.getElementById('input-current-pwd');
+      const newInput = document.getElementById('input-new-pwd');
+      const confirmInput = document.getElementById('input-confirm-pwd');
+
+      const contraseñaActual = currentInput.value.trim();
+      const nuevaContraseña = newInput.value.trim();
+      const confirmarContraseña = confirmInput.value.trim();
 
       // Validaciones
       if (!contraseñaActual || !nuevaContraseña || !confirmarContraseña) {
-        mostrarNotificacion('Por favor completa todos los campos', 'error');
+        mostrarNotificacion('Por favor completa todos los campos', 'error', false);
         return;
       }
 
-      if (contraseñaActual !== adminActual.contraseña) {
-        mostrarNotificacion('La contraseña actual es incorrecta', 'error');
+      if (contraseñaActual !== adminActual.usuario.contrasena) {
+        console.log(adminActual.usuario.contrasena)
+        mostrarNotificacion('La contraseña actual es incorrecta', 'error', false);
+        currentInput.focus();
         return;
       }
 
       if (nuevaContraseña.length < 4) {
-        mostrarNotificacion('La nueva contraseña debe tener al menos 4 caracteres', 'error');
+        mostrarNotificacion('La nueva contraseña debe tener al menos 4 caracteres', 'error', false);
+        newInput.focus();
         return;
       }
 
       if (nuevaContraseña !== confirmarContraseña) {
-        mostrarNotificacion('Las contraseñas no coinciden', 'error');
+        mostrarNotificacion('Las contraseñas no coinciden', 'error', false);
+        confirmInput.focus();
         return;
       }
 
-      const { database, ref, update } = window.firebase;
+      const btn = document.querySelector('#account-modal button:last-child');
+      btn.disabled = true;
 
-      // Actualizar contraseña en Firebase
-      const referenciaAdmin = ref(database, 'admin');
-      update(referenciaAdmin, {
-        contraseña: nuevaContraseña
-      }).then(() => {
-        document.getElementById('input-current-pwd').value = '';
-        document.getElementById('input-new-pwd').value = '';
-        document.getElementById('input-confirm-pwd').value = '';
-        mostrarNotificacion('Contraseña actualizada correctamente', 'success');
-      }).catch((error) => {
-        console.error('Error al actualizar contraseña:', error);
-        mostrarNotificacion('Error al actualizar la contraseña', 'error');
-      });
+      try {
+        const referenciaAdmin = ref(db, `administradores/${adminActual.usuario.id}`);
+
+
+        update(referenciaAdmin, {
+          contrasena: nuevaContraseña
+        })
+        .then(() => {
+          // Limpiar inputs
+          currentInput.value = '';
+          newInput.value = '';
+          confirmInput.value = '';
+
+          mostrarNotificacion('Contraseña actualizada correctamente', 'success', false);
+          setTimeout(() => {closeAccountModal()}, 1800);
+          
+        })
+        .catch((error) => {
+          console.error('Error al actualizar contraseña:', error);
+          mostrarNotificacion('Error al actualizar la contraseña', 'error', false);
+        })
+        .finally(() => {
+          btn.disabled = false;
+        });
+
+      } catch (error) {
+        console.error('Error inesperado:', error);
+        mostrarNotificacion('Error inesperado', 'error', false);
+        btn.disabled = false;
+      }
     }
 
     // ========== CIERRE DE SESIÓN ==========
     // Abre modal de confirmación para cerrar sesión
-    function manejarCierreSesion() {
+    window.manejarCierreSesion = function() {
       document.getElementById('logout-modal').classList.remove('hidden');
     }
 
     // Cierra modal de logout
-    function closeLogoutModal() {
+    window.closeLogoutModal = function() {
       document.getElementById('logout-modal').classList.add('hidden');
     }
 
     // Confirma el cierre de sesión
-    function confirmLogout() {
+    window.confirmLogout = function() {
+
+      localStorage.removeItem("usuarioAutenticado");
       closeLogoutModal();
       mostrarNotificacion('Sesión cerrada correctamente', 'success');
       setTimeout(() => {window.location.href = '../index.html';}, 1800);
@@ -1172,8 +1415,14 @@
 
     // ========== NOTIFICACIONES (TOASTS) ==========
     // Muestra una notificación temporal en la esquina inferior derecha
-    function mostrarNotificacion(mensaje, tipo = 'info') {
-      const contenedor = document.getElementById('toast-container');
+    function mostrarNotificacion(mensaje, tipo = 'info', cuenta = true) {
+      let contenedor
+      if (cuenta) {
+        contenedor = document.getElementById('toast-container');
+      }else{
+        contenedor = document.getElementById('toast-container2');
+      }
+      
       // Colores según el tipo de notificación
       const colores = { success: 'bg-emerald-500', error: 'bg-red-500', info: 'bg-blue-500' };
       // Iconos según el tipo
@@ -1220,7 +1469,7 @@
 
     // ========== GESTIÓN DE TEMAS ==========
     // Cambia entre tema claro y oscuro
-    function cambiarTema() {
+    window.cambiarTema = function() {
       temaActual = temaActual === 'dark' ? 'light' : 'dark';
       aplicarTema();
       localStorage.setItem('adminTema', temaActual);
@@ -1229,17 +1478,12 @@
 
     // Aplica los estilos del tema actual
     function aplicarTema() {
-      const tema = temaActual === 'light' ? temaPalido : temaOscuro;
-      
-      if (temaActual === 'light') {
-        document.body.classList.add('light-theme');
-      } else {
-        document.body.classList.remove('light-theme');
-      }
-      
-      document.body.style.backgroundColor = tema.fondo;
-      document.body.style.color = tema.texto;
-    }
+  if (temaActual === 'light') {
+    document.body.classList.add('light-theme');
+  } else {
+    document.body.classList.remove('light-theme');
+  }
+}
 
     // Actualiza el botón del tema en la UI
     function actualizarBotonTema() {
@@ -1276,7 +1520,8 @@
 
     // ========== INICIAR APLICACIÓN ==========
     // Inicia la aplicación cuando el DOM está cargado
-    inicializar();
+    conectarFirebase();
   </script> 
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9da466bf213f1741',t:'MTc3MzE2NzUzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9da466bf213f1741',t:'MTc3MzE2NzUzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
 </html>

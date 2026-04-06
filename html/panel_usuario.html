@@ -55,11 +55,11 @@
       </div>
      </div>
      <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
-      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold" id="abr_rep">
        JD
       </div>
       <div class="flex-1 min-w-0">
-       <p class="font-medium text-sm text-white truncate">Juan Díaz</p>
+       <p class="font-medium text-sm text-white truncate" id="nombre_rep">Juan Díaz</p>
        <p class="text-xs text-slate-400">Representante</p>
       </div><span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
      </div>
@@ -328,31 +328,43 @@
     // 🚀 Esperar DOM
     document.addEventListener("DOMContentLoaded", () => {
 
-    // MENU
-    const btnMenu = document.getElementById("boton-menu");
-    const sidebar = document.getElementById("sidebar");
+      const usuario = JSON.parse(localStorage.getItem("usuarioAutenticado"));
+      if (!usuario) {
+        mostrarToast("Debes iniciar sesión", "error");
+        return;
+      }
 
-    btnMenu.addEventListener("click", () => {
-      sidebar.classList.toggle("-translate-x-full");
-    });
+      const abr_rep = document.getElementById("abr_rep");
+      const nombre_rep = document.getElementById("nombre_rep")
 
+      abr_rep.textContent = usuario.usuario.nombre.trim().split(" ").filter(palabra => palabra.length > 0).map(palabra => palabra[0].toUpperCase()).join("");
+      nombre_rep.textContent = usuario.usuario.nombre
 
-    // 📥 Cargar sugerencias
-    onValue(ref(db, "sugerencias"), snapshot => {
-      allSuggestions = [];
+      // MENU
+      const btnMenu = document.getElementById("boton-menu");
+      const sidebar = document.getElementById("sidebar");
 
-      snapshot.forEach(child => {
-        allSuggestions.push({
-          ...child.val(),
-          __id: child.key
-        });
+      btnMenu.addEventListener("click", () => {
+        sidebar.classList.toggle("-translate-x-full");
       });
 
-      updateUI();
-    });
 
-    // 📝 Form submit
-    document.getElementById("suggestion-form").addEventListener("submit", guardarSugerencia);
+      // 📥 Cargar sugerencias
+      onValue(ref(db, "sugerencias"), snapshot => {
+        allSuggestions = [];
+
+        snapshot.forEach(child => {
+          allSuggestions.push({
+            ...child.val(),
+            __id: child.key
+          });
+        });
+
+        updateUI();
+      });
+
+      // 📝 Form submit
+      document.getElementById("suggestion-form").addEventListener("submit", guardarSugerencia);
 
     });
 
@@ -578,7 +590,7 @@
     // =========================
     // 🔐 SESIÓN
     // =========================
-    window.manejarCerrarSesion = () => {
+     window.manejarCerrarSesion = () => {
       document.getElementById("logout-modal").classList.remove("hidden");
     };
 
