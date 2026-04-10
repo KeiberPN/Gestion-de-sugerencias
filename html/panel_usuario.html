@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es" class="h-full">
+<html lang="es" class="h-full" class="dark">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,6 +30,77 @@
     @keyframes slideIn {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
+    }
+
+
+
+      /* Tema claro */
+    .light-theme {
+      background-color: #f1f5f9; /* gris claro suave */
+      color: #1e293b;
+    }
+
+    /* Sobrescribir Tailwind en modo claro */
+    .light-theme .bg-slate-900,
+    .light-theme .bg-slate-800,
+    .light-theme .bg-slate-800\/50,
+    .light-theme .bg-slate-700\/30,
+    .light-theme .bg-slate-700\/50 {
+      background-color: #ffffff !important;
+    }
+
+    .light-theme .text-white {
+      color: #1e293b !important;
+    }
+
+    .light-theme .text-slate-300,
+    .light-theme .text-slate-400 {
+      color: #475569 !important;
+    }
+
+    .light-theme .border-slate-700,
+    .light-theme .border-slate-700\/50,
+    .light-theme .border-slate-600\/50 {
+      border-color: #e2e8f0 !important;
+    }    
+
+    .light-theme #sidebar {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+
+    .light-theme main {
+      background-color: #d3d7db;
+    }
+
+    .light-theme .stat-card,
+    .light-theme .card-hover {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+
+
+    .light-theme .card-hover:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .light-theme .text-white {
+      color: #0f172a !important;
+    }
+
+    .light-theme .text-slate-400 {
+      color: #64748b !important;
+    }
+
+    .light-theme input,
+    .light-theme select,
+    .light-theme textarea {
+      background-color: #f8fafc !important;
+      color: #1e293b !important;
+      border-color: #e2e8f0 !important;
     }
   </style>
   <style>body { box-sizing: border-box; }</style>
@@ -82,7 +153,13 @@
         <span class="font-medium">Mis Sugerencias</span> 
         <span id="badge-count" class="ml-auto bg-emerald-500/20 text-emerald-400 text-xs font-semibold px-2 py-0.5 rounded-full">0</span> 
       </button> 
-    </nav><!-- Logout -->
+    </nav>
+    <div class="p-4 border-t border-slate-700/50 space-y-2">
+     <button onclick="cambiarTema()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-colors">
+      <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg><span class="font-medium" id="theme-text">Tema Claro</span> </button>
+    </div><!-- Logout -->
     <div class="p-4 border-t border-slate-700/50"><button onclick="manejarCerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
       </svg><span class="font-medium">Cerrar Sesión</span> </button>
@@ -316,6 +393,7 @@
     let db;
     let allSuggestions = [];
     let deleteTarget = null;
+    let temaActual = 'dark';
     // Initialize Firebase
     try {
       const app = initializeApp(firebaseConfig);
@@ -492,7 +570,17 @@
     }
 
     function updateBadge() {
-      document.getElementById("badge-count").textContent = allSuggestions.length;
+
+      const usuarioActual = JSON.parse(localStorage.getItem("usuarioAutenticado"));
+
+      if (!usuarioActual || !usuarioActual.usuario?.id) return;
+
+      const uid = usuarioActual.usuario.id;
+
+      // 🔥 Filtrar solo las sugerencias del usuario
+      const misSugerencias = allSuggestions.filter(s => s.autorId === uid);
+
+      document.getElementById("badge-count").textContent = misSugerencias.length;
     }
 
     // =========================
@@ -602,6 +690,25 @@
       localStorage.removeItem("usuarioAutenticado");
       window.location.href = "../index.html";
     };
+
+
+     // ========== GESTIÓN DE TEMAS ==========
+    // Cambia entre tema claro y oscuro
+    window.cambiarTema = function() {
+      temaActual = temaActual === 'dark' ? 'light' : 'dark';
+      aplicarTema();
+      localStorage.setItem('adminTema', temaActual);
+      actualizarBotonTema();
+    }
+
+    // Aplica los estilos del tema actual
+    function aplicarTema() {
+      if (temaActual === 'light') {
+        document.body.classList.add('light-theme');
+      } else {
+        document.body.classList.remove('light-theme');
+      }
+    }
 
     
   </script>

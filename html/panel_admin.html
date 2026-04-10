@@ -188,7 +188,7 @@
 }
 
 .light-theme main {
-  background-color: #f1f5f9;
+  background-color: #d3d7db;
 }
 
 .light-theme .stat-card,
@@ -224,9 +224,15 @@
   <style>body { box-sizing: border-box; }</style>
  </head>
  <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
+  <button id="boton-menu"
+  class="md:hidden fixed top-4 left-4 z-50 bg-slate-800 p-2 rounded-lg border border-slate-700">
+    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
   <div id="app" class="h-full w-full flex">
    <!-- Sidebar -->
-   <aside id="sidebar" class="w-72 bg-slate-800/50 backdrop-blur-xl border-r border-slate-700/50 flex flex-col">
+   <aside id="sidebar" class="fixed md:relative z-40 w-72 h-full md:h-auto bg-slate-800/50 backdrop-blur-xl border-r border-slate-700/50 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300">
     <!-- Logo & User -->
     <div class="p-6 border-b border-slate-700/50">
      <div class="flex items-center gap-3 mb-6">
@@ -470,16 +476,22 @@
      </div>
      <div class="space-y-4">
       <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Nombre Completo *</label> <input type="text" id="input-rep-nombre" placeholder="Ej: Juan Pérez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+       <label class="block text-sm font-medium text-slate-300 mb-2">Nombre</label> <input type="text" id="input-rep-nombre" placeholder="Ej: Juan Pérez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
       </div>
       <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Usuario *</label> <input type="text" id="input-rep-usuario" placeholder="Ej: juan.perez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+       <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> <input type="text" id="input-rep-usuario" placeholder="Ej: juan.perez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
       </div>
       <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña *</label> <input type="password" id="input-rep-password" placeholder="Contraseña inicial" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+       <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> <input type="password" id="input-rep-password" placeholder="Contraseña inicial" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
       </div>
       <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Email</label> <input type="email" id="input-rep-email" placeholder="email@ejemplo.com" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+       <label class="block text-sm font-medium text-slate-300 mb-2">Representados</label> 
+       <div id="contenedor-representados" class="space-y-4"></div>
+
+      <button onclick="agregarFormularioRepresentado()"
+        class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">
+        + Agregar representado
+      </button>
       </div>
       <div class="flex gap-3 pt-4">
        <button onclick="closeCreateRepresentativeModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="createRepresentative()" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Crear</button>
@@ -605,6 +617,13 @@
     let todasLasSugerencias = [];
     let representantes = [];
     let temaActual = 'dark';
+    // MENU
+    const btnMenu = document.getElementById("boton-menu");
+    const sidebar = document.getElementById("sidebar");
+
+    btnMenu.addEventListener("click", () => {
+      sidebar.classList.toggle("-translate-x-full");
+    });
     
     // Información del administrador actual
     let adminActual = JSON.parse(localStorage.getItem("usuarioAutenticado"));
@@ -1130,9 +1149,41 @@
       document.getElementById('input-rep-nombre').value = '';
       document.getElementById('input-rep-usuario').value = '';
       document.getElementById('input-rep-password').value = '';
-      document.getElementById('input-rep-email').value = '';
       document.getElementById('create-representative-modal').classList.remove('hidden');
     }
+
+    let contadorRepresentados = 0;
+
+    window.agregarFormularioRepresentado = function() {
+      contadorRepresentados++;
+
+      const contenedor = document.getElementById('contenedor-representados');
+
+      const div = document.createElement('div');
+      div.classList = "p-4 bg-slate-700/30 rounded-lg space-y-2";
+
+      div.innerHTML = `
+        <input type="text" placeholder="Nombre"
+          class="rep-nombre w-full px-3 py-2 bg-slate-700 rounded">
+
+        <input type="text" placeholder="Apellido"
+          class="rep-apellido w-full px-3 py-2 bg-slate-700 rounded">
+
+        <input type="number" placeholder="Cédula"
+          class="rep-ci w-full px-3 py-2 bg-slate-700 rounded">
+
+        <input type="text" placeholder="Grado"
+          class="rep-grado w-full px-3 py-2 bg-slate-700 rounded">
+
+        <input type="text" placeholder="Sección"
+          class="rep-seccion w-full px-3 py-2 bg-slate-700 rounded">
+
+        <button onclick="this.parentElement.remove()"
+          class="text-red-400 text-sm">Eliminar</button>
+      `;
+
+      contenedor.appendChild(div);
+    };
 
     // Cierra modal de crear representante
     window.closeCreateRepresentativeModal = function() {
@@ -1141,73 +1192,88 @@
 
     // Crea un nuevo representante en Firebase
     window.createRepresentative = function() {
-      const nombreInput = document.getElementById('input-rep-nombre');
-      const usuarioInput = document.getElementById('input-rep-usuario');
-      const passwordInput = document.getElementById('input-rep-password');
-      const emailInput = document.getElementById('input-rep-email');
 
-      const nombre = nombreInput.value.trim();
-      const usuario = usuarioInput.value.trim().toLowerCase();
-      const contraseña = passwordInput.value.trim();
-      const email = emailInput.value.trim();
+      const nombre = document.getElementById('input-rep-nombre').value.trim();
+      const user = document.getElementById('input-rep-usuario').value.trim().toLowerCase();
+      const contrasena = document.getElementById('input-rep-password').value.trim();
 
-      // Validación básica
-      if (!nombre || !usuario || !contraseña) {
-        mostrarNotificacion('Por favor completa todos los campos requeridos', 'error');
+      if (!nombre || !user || !contrasena) {
+        mostrarNotificacion('Completa los datos del representante', 'error');
         return;
       }
 
-      if (usuario.length < 3) {
-        mostrarNotificacion('El usuario debe tener al menos 3 caracteres', 'error');
-        usuarioInput.focus();
+      // 🔥 Obtener representados
+      const representadosDOM = document.querySelectorAll('#contenedor-representados > div');
+
+      if (representadosDOM.length === 0) {
+        mostrarNotificacion('Agrega al menos un representado', 'error');
         return;
       }
 
-      // Verificar duplicado (case insensitive)
-      if (representantes.some(r => (r.usuario || '').toLowerCase() === usuario)) {
-        mostrarNotificacion('Este usuario ya existe', 'error');
-        usuarioInput.focus();
-        return;
-      }
+      let representados = {};
+
+      representadosDOM.forEach((div, index) => {
+        const nombre = div.querySelector('.rep-nombre').value.trim();
+        const apellido = div.querySelector('.rep-apellido').value.trim();
+        const ci = div.querySelector('.rep-ci').value.trim();
+        const grado = div.querySelector('.rep-grado').value.trim();
+        const seccion = div.querySelector('.rep-seccion').value.trim();
+
+        if (!nombre || !apellido || !ci) return;
+
+        // 🔥 ID interno del representado
+        const idRep = "rep_" + (index + 1);
+
+        representados[idRep] = {
+          nombre,
+          apellido,
+          ci,
+          grado,
+          seccion
+        };
+      });
 
       const btn = document.querySelector('#create-representative-modal button:last-child');
       btn.disabled = true;
 
       try {
-        const referenciaRepresentantes = ref(db, 'representantes');
+        const refRepresentantes = ref(db, 'representantes');
 
-        push(referenciaRepresentantes, {
+        // 🔥 ID aleatorio automático
+        const nuevoRef = push(refRepresentantes);
+
+        set(nuevoRef, {
           nombre,
-          usuario,
-          email,
+          user,
+          contrasena,
           estado: 'activo',
-          fecha_creacion: new Date().toISOString()
-          // ⚠️ Nota: no guardo contraseña (ver explicación abajo)
+          fecha_creacion: new Date().toISOString(),
+          representados
         })
         .then(() => {
-          // Limpiar inputs
-          nombreInput.value = '';
-          usuarioInput.value = '';
-          passwordInput.value = '';
-          emailInput.value = '';
+
+          document.getElementById('input-rep-nombre').value = '';
+          document.getElementById('input-rep-usuario').value = '';
+          document.getElementById('input-rep-password').value = '';
+          document.getElementById('contenedor-representados').innerHTML = '';
 
           closeCreateRepresentativeModal();
-          mostrarNotificacion(`Representante ${nombre} creado exitosamente`, 'success');
+          mostrarNotificacion('Representante creado correctamente', 'success');
         })
         .catch((error) => {
-          console.error('Error al crear representante:', error);
-          mostrarNotificacion('Error al crear el representante', 'error');
+          console.error(error);
+          mostrarNotificacion('Error al guardar', 'error');
         })
         .finally(() => {
           btn.disabled = false;
         });
 
       } catch (error) {
-        console.error('Error inesperado:', error);
+        console.error(error);
         mostrarNotificacion('Error inesperado', 'error');
         btn.disabled = false;
       }
-    }
+    };
 
     // Abre modal para editar un representante
     window.abrirModalEditarRepresentante = function(representanteId) {
@@ -1476,12 +1542,12 @@
 
     // Aplica los estilos del tema actual
     function aplicarTema() {
-  if (temaActual === 'light') {
-    document.body.classList.add('light-theme');
-  } else {
-    document.body.classList.remove('light-theme');
-  }
-}
+      if (temaActual === 'light') {
+        document.body.classList.add('light-theme');
+      } else {
+        document.body.classList.remove('light-theme');
+      }
+    }
 
     // Actualiza el botón del tema en la UI
     function actualizarBotonTema() {

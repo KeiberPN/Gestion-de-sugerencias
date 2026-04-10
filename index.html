@@ -177,7 +177,7 @@
      <div id="login-admin-section" class="space-y-4">
       <div>
         <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> 
-        <input type="email" id="login-admin-email" placeholder="admin@ejemplo.com" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
+        <input type="user" id="login-admin-user" placeholder="admin@ejemplo.com" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
       </div>
       <div>
         <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
@@ -318,10 +318,10 @@
     // Valida las credenciales del administrador contra Firebase
     document.getElementById("btnLogin").addEventListener("click", loginAdministrador);
     function loginAdministrador() {
-      const email = document.getElementById('login-admin-email').value.trim();
+      const user = document.getElementById('login-admin-user').value.trim();
       const password = document.getElementById('login-admin-password').value.trim();
 
-      if (!email || !password) {
+      if (!user || !password) {
         mostrarToastLogin('Por favor completa todos los campos', 'error');
         return;
       }
@@ -335,14 +335,14 @@
         snapshot.forEach((childSnapshot) => {
           const admin = childSnapshot.val();
 
-          if (admin.email === email && admin.contrasena === password) {
+          if (admin.user === user && admin.contrasena === password) {
             encontrado = true;
 
             const datosUsuario = {
               usuario: {
                 id: childSnapshot.key,
                 nombre: admin.nombre,
-                email: admin.email,
+                user: admin.user,
                 contrasena: admin.contrasena,
                 iniciales: admin.nombre.substring(0, 2).toUpperCase()
               },
@@ -397,15 +397,18 @@
         snapshot.forEach((childSnapshot) => {
           const rep = childSnapshot.val();
 
-          // ⚠️ aquí puedes usar email o usuario según tu estructura
-          if (rep.email === usuario && rep.contrasena === password) {
+          // ⚠️ aquí puedes usar user o usuario según tu estructura
+          console.log(rep.user)
+          console.log(rep.contrasena)
+
+          if (rep.user == usuario && rep.contrasena == password) {
             encontrado = true;
 
             const datosUsuario = {
               usuario: {
                 id: childSnapshot.key,
                 nombre: rep.nombre,
-                email: rep.email,
+                user: rep.user,
                 iniciales: rep.nombre.substring(0, 2).toUpperCase()
               },
               rol: 'representante'
