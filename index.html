@@ -3,212 +3,153 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de sugerencias</title>
+  <title>E.T.P. "NUESTRA SEÑORA DEL CARMEN" | Sugerencias</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s, border-color 0.3s; }
     
-    /* ========== ANIMACIONES ========== */
-    .card-hover { 
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    /* ========== PERSONALIZACIÓN INSTITUCIONAL ========== */
+    :root {
+      --primary-color: #ef4444; /* Rojo institucional */
+      --secondary-color: #1e293b; /* Azul oscuro */
     }
-    .card-hover:hover { 
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(239, 68, 68, 0.15);
+
+    /* Fondo animado para el login */
+    #login-screen {
+      background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.05), transparent),
+                  radial-gradient(circle at bottom left, rgba(30, 41, 59, 0.05), transparent);
     }
-    
-    .fade-in { animation: fadeIn 0.5s ease-out; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .slide-in-left { animation: slideInLeft 0.5s ease-out; }
-    @keyframes slideInLeft {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    
-    .pulse-dot { 
-      animation: pulse 2s infinite; 
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.1); }
-    }
-    
-    .sidebar-item { 
-      transition: all 0.2s ease;
-      position: relative;
-    }
-    .sidebar-item:hover { 
-      padding-left: 1.5rem;
-      background: rgba(30, 41, 59, 0.5);
-    }
-    
-    /* Modo claro - sidebar item */
-    body.light-theme .sidebar-item:hover {
-      background: rgba(226, 232, 240, 0.5);
-    }
-    
-    .toast { animation: slideIn 0.3s ease-out; }
-    @keyframes slideIn {
-      from { transform: translateX(400px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    /* ========== BARRA DE DESPLAZAMIENTO PERSONALIZADA ========== */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.5);
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(148, 163, 184, 0.7);
-    }
-    
-    /* ========== ANIMACIONES DE BADGES ========== */
-    .badge-pulse {
-      animation: badgePulse 2s infinite;
-    }
-    @keyframes badgePulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    
-    /* ========== EFECTOS DE ÍCONOS Y BOTONES ========== */
-    .icon-btn {
-      transition: all 0.3s ease;
-    }
-    .icon-btn:hover {
-      transform: scale(1.1);
-    }
-    
-    /* ========== MODAL Y BACKDROP ========== */
-    .modal-backdrop {
-      animation: backdropFade 0.3s ease-out;
-    }
-    @keyframes backdropFade {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    /* ========== BARRAS DE PROGRESO ========== */
-    .progress-fill {
-      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    /* ========== TARJETAS DE ESTADÍSTICAS ========== */
-    .stat-card {
-      position: relative;
-      overflow: hidden;
-    }
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    }
-    
-    /* Modo claro - borde de tarjeta */
-    body.light-theme .stat-card::before {
-      background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.05), transparent);
-    }
-    
-    /* ========== ENTRADAS DE FORMULARIOS ========== */
-    input, textarea, select {
-      transition: all 0.3s ease;
-    }
-    input:focus, textarea:focus, select:focus {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.1);
-    }
-    
-    /* ========== SELECCIÓN DE TEXTO ========== */
-    ::selection {
-      background: rgba(239, 68, 68, 0.3);
-      color: inherit;
+
+    /* Estilos de inputs enfocados */
+    input:focus {
+      transform: scale(1.01);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
     }
 
     /* ========== TEMA CLARO ========== */
     body.light-theme {
+      background-color: #f1f5f9;
+      color: #17202E !important;
+    }
+
+    body.light-theme #me-text {
+      color: #17202E !important;
+    }
+
+    body.light-theme #login-screen {
       background-color: #f8fafc;
+    }
+    body.light-theme .bg-slate-800\/50 {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-color: rgba(226, 232, 240, 1);
+      backdrop-blur: 20px;
+    }
+    body.light-theme h1 { color: #0f172a; }
+    body.light-theme label { color: #475569; }
+    body.light-theme input {
+      background-color: #ffffff;
+      border-color: #cbd5e1;
       color: #0f172a;
     }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
-  
- </head>
- <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
-  <!-- ========== PANTALLA DE LOGIN ========== --> 
-  <!-- Esta es la primera pantalla que ve el usuario, aquí inicia sesión -->
-  <div id="login-screen" class="h-full w-full flex items-center justify-center p-4">
-   <div class="w-full max-w-md"><!-- Logo y Título -->
-    <div class="text-center mb-8">
-     <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center">
-      <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-      </svg>
-     </div>
-     <h1 class="text-3xl font-bold text-white mb-2">Sistema de Sugerencias</h1>
-     <p class="text-slate-400">Inicia sesión en tu cuenta</p>
-    </div><!-- Formulario de Login -->
-    <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 space-y-6"><!-- Selector de Rol (Admin/Representante) -->
-     <div class="flex gap-3 mb-6">
-      <button id="btn-rol-admin" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-red-500 text-white">
-       <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-       </svg> Administrador </button> 
+    body.light-theme input::placeholder { color: #94a3b8; }
+    body.light-theme #btn-rol-rep {  color: #D4DFEF; }
+    body.light-theme #btn-rol-rep:hover { color: #3B4758; background-color: #cbd5e1; }
 
-       <button id="btn-rol-rep" class="flex-1 py-3 rounded-xl font-semibold transition-all bg-slate-700/50 text-slate-300 hover:bg-slate-700">
-       <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
-       </svg> Representante </button>
-     </div><!-- Sección de Login para Administrador -->
-     <div id="login-admin-section" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> 
-        <input type="user" id="login-admin-user" placeholder="admin@ejemplo.com" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
+    /* ========== ANIMACIONES ========== */
+    .fade-in { animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-container {
+      box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.5);
+    }
+  </style>
+</head>
+
+<body class="h-full bg-slate-950 text-slate-100 overflow-auto overflow-x-hidden">
+
+  <!-- Botón Flotante para cambiar Tema (Solo para visualización) -->
+  <button onclick="document.body.classList.toggle('light-theme')" class="fixed top-4 right-4 p-3 rounded-full bg-slate-800 border border-slate-700 text-yellow-400 hover:scale-110 transition-all z-50">
+    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+  </button>
+
+  <div id="login-screen" class="min-h-screen w-full flex items-center justify-center p-4">
+    <div class="w-full max-w-md fade-in">
+      
+      <!-- Logo Institucional -->
+      <div class="text-center mb-8">
+        <div class="logo-container w-24 h-24 mx-auto mb-6 rounded-3xl bg-white p-1 flex items-center justify-center overflow-hidden border-2 border-red-500">
+          <!-- Coloca el Logo de tu institución aquí -->
+          <img src="img/logo.jpg" alt="Logo ETP" class="w-full h-full object-contain">
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-white mb-1 tracking-tight">E.T.P. ARQ.</h1>
+        <h2 class="text-lg font-semibold text-red-500 mb-4 uppercase tracking-widest">"Ntra. Sra. del Carmen"</h2>
+        <p class="text-slate-400 font-medium" id="me-text">Buzón de Sugerencias Digital</p>
       </div>
-      <div>
-        <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
-        <input type="password" id="login-admin-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all">
+
+      <!-- Formulario de Login -->
+      <div class="bg-slate-800/50 backdrop-blur-2xl border border-slate-700/50 rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl">
+        
+        <!-- Selector de Rol -->
+        <div class="flex gap-2 p-1 bg-slate-900/50 rounded-2xl border border-slate-700/30">
+          <button id="btn-rol-admin" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all bg-red-500 text-white shadow-lg shadow-red-500/20">
+            ADMIN
+          </button> 
+
+          <button id="btn-rol-rep" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all text-slate-400 hover:text-slate-200" id="me-text">
+            REPRESENTANTE
+          </button>
+        </div>
+
+        <!-- Login Administrador -->
+        <div id="login-admin-section" class="space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 ml-1" id="me-text">Usuario Administrativo</label> 
+            <input type="user" id="login-admin-user" placeholder="ejemplo@etp.com" class="w-full px-4 py-4 bg-slate-900/50 border border-slate-700/50 rounded-2xl text-white placeholder-slate-600 focus:outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 ml-1" id="me-text">Contraseña</label> 
+            <input type="password" id="login-admin-password" placeholder="••••••••" class="w-full px-4 py-4 bg-slate-900/50 border border-slate-700/50 rounded-2xl text-white placeholder-slate-600 focus:outline-none transition-all">
+          </div>
+          <button id="btnLogin" class="w-full py-4 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-pink-500 text-white font-bold rounded-2xl transition-all shadow-xl shadow-red-600/20 flex items-center justify-center gap-3">
+            ACCEDER AL SISTEMA
+          </button>
+          <p class="text-[10px] text-slate-600 text-center uppercase tracking-tighter">Acceso restringido a personal autorizado</p>
+        </div>
+
+        <!-- Login Representante -->
+        <div id="login-representante-section" class="hidden space-y-5">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 ml-1" id="me-text">Cédula / Usuario</label> 
+            <input type="text" id="login-rep-usuario" placeholder="V-12345678" class="w-full px-4 py-4 bg-slate-900/50 border border-slate-700/50 rounded-2xl text-white placeholder-slate-600 focus:outline-none transition-all">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 ml-1" id="me-text">Código de Acceso</label> 
+            <input type="password" id="login-rep-password" placeholder="••••••••" class="w-full px-4 py-4 bg-slate-900/50 border border-slate-700/50 rounded-2xl text-white placeholder-slate-600 focus:outline-none transition-all">
+          </div>
+          <button id="btnRep" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl transition-all shadow-xl shadow-blue-600/20 flex items-center justify-center gap-3">
+            ENTRAR COMO REPRESENTANTE
+          </button>
+        </div>
       </div>
-      <button id="btnLogin" class="w-full py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-       </svg> Iniciar Sesión </button>
-      <p class="text-xs text-slate-500 text-center mt-4">Demo: admin / 123</p>
-     </div><!-- Sección de Login para Representante -->
-     <div id="login-representante-section" class="hidden space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> 
-        <input type="text" id="login-rep-usuario" placeholder="tu.usuario" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
+
+      <!-- Footer -->
+      <div class="text-center mt-8 space-y-2">
+        <p class="text-slate-500 text-xs font-semibold uppercase tracking-widest">© 2026 E.T.P. ARQ. NUESTRA SEÑORA DEL CARMEN</p>
+        <div class="flex justify-center gap-4">
+            <span class="h-1 w-8 bg-red-500 rounded-full"></span>
+            <span class="h-1 w-8 bg-slate-700 rounded-full"></span>
+        </div>
       </div>
-      <div>
-        <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
-        <input type="password" id="login-rep-password" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
-      </div>
-      <button id="btnRep" class="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
-       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-       </svg> Iniciar Sesión </button>
-      <p class="text-xs text-slate-500 text-center mt-4">Contacta a tu administrador si no tienes usuario</p>
-     </div>
-    </div><!-- Footer -->
-    <div class="text-center mt-8 text-slate-500 text-sm">
-     <p>© 2024 Sistema de Sugerencias. Todos los derechos reservados.</p>
     </div>
-   </div>
   </div>
+
+
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
@@ -343,6 +284,7 @@
                 id: childSnapshot.key,
                 nombre: admin.nombre,
                 user: admin.user,
+                rol: admin.rol,
                 contrasena: admin.contrasena,
                 iniciales: admin.nombre.substring(0, 2).toUpperCase()
               },
@@ -452,6 +394,8 @@
         setTimeout(() => toast.remove(), 300);
       }, 3000);
     }
+
+    
 
     
 

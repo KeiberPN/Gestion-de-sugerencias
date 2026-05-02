@@ -224,316 +224,471 @@
   <style>body { box-sizing: border-box; }</style>
  </head>
  <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
-  <button id="boton-menu"
-  class="md:hidden fixed top-4 left-4 z-50 bg-slate-800 p-2 rounded-lg border border-slate-700">
-    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M4 6h16M4 12h16M4 18h16"/>
-    </svg>
-  </button>
-  <div id="app" class="h-full w-full flex">
-   <!-- Sidebar -->
-   <aside id="sidebar" class="fixed md:relative z-40 w-72 h-full md:h-auto bg-slate-800/50 backdrop-blur-xl border-r border-slate-700/50 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+  <!-- Overlay para cerrar el menú en móviles (Añadir esto) -->
+<div id="sidebar-overlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
+
+<!-- Botón de Menú Móvil -->
+<button id="boton-menu" onclick="toggleMenu()"
+  class="md:hidden fixed top-4 left-4 z-50 bg-slate-800/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-700 shadow-lg shadow-black/20 active:scale-95 transition-transform">
+  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+  </svg>
+</button>
+
+<div id="app" class="h-screen w-full flex overflow-hidden bg-slate-950">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed md:relative z-40 w-72 h-full bg-slate-900 md:bg-slate-800/50 backdrop-blur-xl border-r border-slate-700/50 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    
     <!-- Logo & User -->
     <div class="p-6 border-b border-slate-700/50">
-     <div class="flex items-center gap-3 mb-6">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center">
-       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-       </svg>
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-pink-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <h1 id="panel-title" class="font-bold text-lg text-white truncate">Panel Administrativo</h1>
+          <p class="text-xs text-slate-400">Gestión de Sugerencias</p>
+        </div>
       </div>
-      <div>
-       <h1 id="panel-title" class="font-bold text-lg text-white">Panel Administrativo</h1>
-       <p class="text-xs text-slate-400">Gestión de Sugerencias</p>
+
+      <!-- Perfil de Usuario en Sidebar -->
+      <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl cursor-pointer hover:bg-slate-700/50 transition-all border border-transparent hover:border-slate-600/50" onclick="abrirModalCuenta()">
+        <div class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white font-semibold shadow-inner">
+          <span id="admin-initials">AD</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="font-medium text-sm text-white truncate" id="admin-name">Administrador</p>
+          <p class="text-xs text-slate-400">Admin</p>
+        </div>
+        <span class="w-2 h-2 rounded-full bg-red-400 pulse-dot shrink-0"></span>
       </div>
-     </div>
-     <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl cursor-pointer hover:bg-slate-700/50 transition-colors" onclick="abrirModalCuenta()">
-      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-white font-semibold">
-       <span id="admin-initials">AD</span>
-      </div>
-      <div class="flex-1 min-w-0">
-       <p class="font-medium text-sm text-white truncate" id="admin-name">Administrador</p>
-       <p class="text-xs text-slate-400">Admin</p>
-      </div><span class="w-2 h-2 rounded-full bg-red-400 pulse-dot"></span>
-     </div>
-    </div><!-- Navigation -->
-    <nav class="flex-1 p-4 space-y-2">
-     <button onclick="mostrarSeccion('dashboard')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors bg-red-500/20 text-red-400" data-section="dashboard">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-      </svg><span class="font-medium">Dashboard</span> </button> <button onclick="mostrarSeccion('sugerencias')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="sugerencias">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-      </svg><span class="font-medium">Sugerencias</span> <span id="badge-sugerencias" class="ml-auto bg-red-500/20 text-red-400 text-xs font-semibold px-2 py-0.5 rounded-full">0</span> </button> <button onclick="mostrarSeccion('representantes')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="representantes">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
-      </svg><span class="font-medium">Representantes</span> <span id="badge-representantes" class="ml-auto bg-red-500/20 text-red-400 text-xs font-semibold px-2 py-0.5 rounded-full">0</span> </button> <button onclick="mostrarSeccion('reportes')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="reportes">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg><span class="font-medium">Reportes</span> </button>
-    </nav><!-- Theme & Settings -->
-    <div class="p-4 border-t border-slate-700/50 space-y-2">
-     <button onclick="cambiarTema()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-colors">
-      <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg><span class="font-medium" id="theme-text">Tema Claro</span> </button>
-    </div><!-- Logout -->
-    <div class="p-4 border-t border-slate-700/50">
-     <button onclick="manejarCierreSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-      </svg><span class="font-medium">Cerrar Sesión</span> </button>
     </div>
-   </aside><!-- Main Content -->
-   <main class="flex-1 overflow-auto">
-    <div class="p-8">
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+      <button onclick="mostrarSeccion('dashboard')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all bg-red-500/10 text-red-400 border border-red-500/20" data-section="dashboard">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+        <span class="font-medium text-sm">Dashboard</span>
+      </button>
+
+      <button onclick="mostrarSeccion('sugerencias')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/40" data-section="sugerencias">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+        </svg>
+        <span class="font-medium text-sm">Sugerencias</span>
+        <span id="badge-sugerencias" class="ml-auto bg-red-500/20 text-red-400 text-xs font-bold px-2 py-0.5 rounded-lg border border-red-500/10">0</span>
+      </button>
+
+      <button onclick="mostrarSeccion('representantes')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/40" data-section="representantes">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
+        </svg>
+        <span class="font-medium text-sm">Representantes</span>
+        <span id="badge-representantes" class="ml-auto bg-red-500/20 text-red-400 text-xs font-bold px-2 py-0.5 rounded-lg border border-red-500/10">0</span>
+      </button>
+
+      <button onclick="mostrarSeccion('administradores')" id="sectionAdmin" class="hidden sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/40" data-section="administradores">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
+        </svg>
+        <span class="font-medium text-sm">Administradores</span>
+        <span id="badge-administradores" class="ml-auto bg-red-500/20 text-red-400 text-xs font-bold px-2 py-0.5 rounded-lg border border-red-500/10">0</span>
+      </button>
+
+      <button onclick="mostrarSeccion('reportes')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/40" data-section="reportes">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <span class="font-medium text-sm">Reportes</span>
+      </button>
+    </nav>
+
+    <!-- Theme & Logout -->
+    <div class="p-4 border-t border-slate-700/50 space-y-1">
+      <button onclick="cambiarTema()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/40 transition-colors">
+        <svg id="theme-icon" class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <span class="font-medium text-sm" id="theme-text">Tema Claro</span>
+      </button>
+      
+      <button onclick="manejarCierreSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span class="font-medium text-sm">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-auto bg-slate-950 relative pt-20 md:pt-0">
+    <div class="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
      <!-- Dashboard Section -->
-     <section id="section-dashboard" class="fade-in">
-      <div class="mb-8">
-       <h2 id="welcome-message" class="text-3xl font-bold text-white mb-2">Bienvenido, Administrador</h2>
-       <p class="text-slate-400">Panel de control del sistema de sugerencias</p>
-      </div><!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-blue-500/30">
-        <div class="flex items-start justify-between">
-         <div class="flex-1">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 flex items-center justify-center mb-4">
-           <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-           </svg>
+<section id="section-dashboard" class="fade-in">
+  <div class="mb-6 md:mb-8">
+    <h2 id="welcome-message" class="text-2xl md:text-3xl font-bold text-white mb-2">Bienvenido, Administrador</h2>
+    <p class="text-sm md:text-base text-slate-400">Panel de control del sistema de sugerencias</p>
+  </div>
+  
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+    <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl border border-slate-700/50 hover:border-blue-500/30">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-blue-500/30 to-blue-600/20 flex items-center justify-center mb-3 sm:mb-4">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+            </svg>
           </div>
-          <p id="stat-total-sugerencias" class="text-5xl font-bold text-white mb-2">0</p>
-          <p class="text-sm text-slate-400">Sugerencias totales</p>
-          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-blue-500 to-blue-400"></div>
-         </div>
+          <p id="stat-total-sugerencias" class="text-4xl sm:text-5xl font-bold text-white mb-1 sm:mb-2">0</p>
+          <p class="text-xs sm:text-sm text-slate-400">Sugerencias totales</p>
+          <div class="mt-2 sm:mt-3 h-1 w-12 sm:w-16 rounded-full bg-gradient-to-r from-blue-500 to-blue-400"></div>
         </div>
-       </div>
-       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-amber-500/30">
-        <div class="flex items-start justify-between">
-         <div class="flex-1">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/30 to-amber-600/20 flex items-center justify-center mb-4">
-           <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-           </svg>
-          </div>
-          <p id="stat-pendientes" class="text-5xl font-bold text-amber-400 mb-2">0</p>
-          <p class="text-sm text-slate-400">Por revisar</p>
-          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-400"></div>
-         </div>
-        </div>
-       </div>
-       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30">
-        <div class="flex items-start justify-between">
-         <div class="flex-1">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/20 flex items-center justify-center mb-4">
-           <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-           </svg>
-          </div>
-          <p id="stat-respondidas" class="text-5xl font-bold text-emerald-400 mb-2">0</p>
-          <p class="text-sm text-slate-400">Respondidas</p>
-          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
-         </div>
-        </div>
-       </div>
-       <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700/50 hover:border-purple-500/30">
-        <div class="flex items-start justify-between">
-         <div class="flex-1">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-600/20 flex items-center justify-center mb-4">
-           <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
-           </svg>
-          </div>
-          <p id="stat-representantes" class="text-5xl font-bold text-purple-400 mb-2">0</p>
-          <p class="text-sm text-slate-400">Representantes</p>
-          <div class="mt-3 h-1 w-16 rounded-full bg-gradient-to-r from-purple-500 to-purple-400"></div>
-         </div>
-        </div>
-       </div>
-      </div><!-- Recent Activity -->
-      <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-       <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
-        <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg> Actividad Reciente</h3>
-       <div id="recent-activity" class="space-y-4">
-        <div class="text-center py-8 text-slate-500">
-         <p>No hay actividad reciente</p>
-        </div>
-       </div>
       </div>
-     </section><!-- Sugerencias Section -->
-     <section id="section-sugerencias" class="hidden fade-in">
-      <div class="mb-8">
-       <h2 class="text-3xl font-bold text-white mb-2">Sugerencias Recibidas</h2>
-       <p class="text-slate-400">Revisa y responde todas las sugerencias de los representantes</p>
-      </div>
-      <div class="mb-6 flex flex-col md:flex-row gap-3">
-       <select id="filter-estado-sugerencias" onchange="aplicarFiltros()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todos los estados</option> <option value="pendiente">Pendiente</option> <option value="en_revision">En Revisión</option> <option value="respondida">Respondida</option> <option value="aprobada">Aprobada</option> <option value="rechazada">Rechazada</option> </select> <select id="filter-prioridad" onchange="aplicarFiltros()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="">Todas las prioridades</option> <option value="alta">Alta</option> <option value="media">Media</option> <option value="baja">Baja</option> </select> <input type="text" id="search-sugerencias" placeholder="Buscar sugerencia..." onkeyup="aplicarFiltros()" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50">
-      </div>
-      <div id="sugerencias-list" class="space-y-4">
-       <div class="text-center py-16 text-slate-500">
-        <p>No hay sugerencias</p>
-       </div>
-      </div>
-     </section><!-- Representantes Section -->
-     <section id="section-representantes" class="hidden fade-in">
-      <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-       <div>
-        <h2 class="text-3xl font-bold text-white mb-2">Gestión de Representantes</h2>
-        <p class="text-slate-400">Crea y administra cuentas de representantes</p>
-       </div><button onclick="openCreateRepresentativeModal()" class="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg> Crear Representante </button>
-      </div>
-      <div id="representantes-list" class="space-y-4">
-       <div class="text-center py-16 text-slate-500">
-        <p>No hay representantes</p>
-       </div>
-      </div>
-     </section><!-- Reportes Section -->
-     <section id="section-reportes" class="hidden fade-in">
-      <div class="mb-8">
-       <h2 class="text-3xl font-bold text-white mb-2">Reportes y Estadísticas</h2>
-       <p class="text-slate-400">Análisis detallado del sistema de sugerencias</p>
-      </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-       <!-- Por Estado -->
-       <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-        <h3 class="text-lg font-bold text-white mb-6">Sugerencias por Estado</h3>
-        <div id="stats-estado" class="space-y-4">
-         <p class="text-slate-500 text-center py-8">Sin datos</p>
-        </div>
-       </div><!-- Por Prioridad -->
-       <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-        <h3 class="text-lg font-bold text-white mb-6">Por Prioridad</h3>
-        <div id="stats-prioridad" class="space-y-4">
-         <p class="text-slate-500 text-center py-8">Sin datos</p>
-        </div>
-       </div><!-- Actividad por Representante -->
-       <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6 lg:col-span-2">
-        <h3 class="text-lg font-bold text-white mb-6">Top Representantes por Sugerencias</h3>
-        <div id="stats-representantes" class="space-y-3">
-         <p class="text-slate-500 text-center py-8">Sin datos</p>
-        </div>
-       </div>
-      </div>
-     </section>
     </div>
-   </main>
-   <!-- Toast Container -->
-   <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
-   <!-- Logout Modal -->
-   <div id="logout-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-sm w-full">
-     <div class="text-center">
+    <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl border border-slate-700/50 hover:border-amber-500/30">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-amber-500/30 to-amber-600/20 flex items-center justify-center mb-3 sm:mb-4">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p id="stat-pendientes" class="text-4xl sm:text-5xl font-bold text-amber-400 mb-1 sm:mb-2">0</p>
+          <p class="text-xs sm:text-sm text-slate-400">Por revisar</p>
+          <div class="mt-2 sm:mt-3 h-1 w-12 sm:w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-400"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl border border-slate-700/50 hover:border-emerald-500/30">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/20 flex items-center justify-center mb-3 sm:mb-4">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p id="stat-respondidas" class="text-4xl sm:text-5xl font-bold text-emerald-400 mb-1 sm:mb-2">0</p>
+          <p class="text-xs sm:text-sm text-slate-400">Respondidas</p>
+          <div class="mt-2 sm:mt-3 h-1 w-12 sm:w-16 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-hover stat-card bg-gradient-to-br from-slate-800 to-slate-900 p-4 sm:p-6 rounded-2xl border border-slate-700/50 hover:border-purple-500/30">
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-purple-500/30 to-purple-600/20 flex items-center justify-center mb-3 sm:mb-4">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m6 0a6 6 0 11-12 0 6 6 0 0112 0z" />
+            </svg>
+          </div>
+          <p id="stat-representantes" class="text-4xl sm:text-5xl font-bold text-purple-400 mb-1 sm:mb-2">0</p>
+          <p class="text-xs sm:text-sm text-slate-400">Representantes</p>
+          <div class="mt-2 sm:mt-3 h-1 w-12 sm:w-16 rounded-full bg-gradient-to-r from-purple-500 to-purple-400"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recent Activity -->
+  <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-4 sm:p-6">
+    <h3 class="text-lg md:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg> Actividad Reciente
+    </h3>
+    <div id="recent-activity" class="space-y-4">
+      <div class="text-center py-6 sm:py-8 text-slate-500">
+        <p class="text-sm sm:text-base">No hay actividad reciente</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sugerencias Section -->
+<section id="section-sugerencias" class="hidden fade-in">
+  <div class="mb-6 md:mb-8">
+    <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Sugerencias Recibidas</h2>
+    <p class="text-sm md:text-base text-slate-400">Revisa y responde todas las sugerencias de los representantes</p>
+  </div>
+  <div class="mb-6 flex flex-col md:flex-row gap-3">
+    <select id="filter-estado-sugerencias" onchange="aplicarFiltros()" class="w-full md:w-auto px-4 py-3 md:py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> 
+      <option value="">Todos los estados</option> 
+      <option value="pendiente">Pendiente</option> 
+      <option value="en_revision">En Revisión</option> 
+      <option value="respondida">Respondida</option> 
+      <option value="aprobada">Aprobada</option> 
+      <option value="rechazada">Rechazada</option> 
+    </select> 
+    <select id="filter-prioridad" onchange="aplicarFiltros()" class="w-full md:w-auto px-4 py-3 md:py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50"> 
+      <option value="">Todas las prioridades</option> 
+      <option value="alta">Alta</option> 
+      <option value="media">Media</option> 
+      <option value="baja">Baja</option> 
+    </select> 
+    <input type="text" id="search-sugerencias" placeholder="Buscar sugerencia..." onkeyup="aplicarFiltros()" class="w-full flex-1 px-4 py-3 md:py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50">
+  </div>
+  <div id="sugerencias-list" class="space-y-4">
+    <div class="text-center py-12 md:py-16 text-slate-500">
+      <p>No hay sugerencias</p>
+    </div>
+  </div>
+</section>
+
+<!-- Representantes Section -->
+<section id="section-representantes" class="hidden fade-in">
+  <div class="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Gestión de Representantes</h2>
+      <p class="text-sm md:text-base text-slate-400">Crea y administra cuentas de representantes</p>
+    </div>
+    <button onclick="openCreateRepresentativeModal()" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/20">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg> Crear Representante 
+    </button>
+  </div>
+  <div id="representantes-list" class="space-y-4">
+    <div class="text-center py-12 md:py-16 text-slate-500">
+      <p>No hay representantes</p>
+    </div>
+  </div>
+</section>
+
+<!-- Seccion de administradores -->
+<section id="section-administradores" class="hidden fade-in">
+  <div class="mb-6 md:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Gestión de Administradores</h2>
+      <p class="text-sm md:text-base text-slate-400">Crea y administra cuentas de administradores</p>
+    </div>
+    <button onclick="openCreateAdminModal()" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/20">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg> Crear administrador 
+    </button>
+  </div>
+  <div id="administradores-list" class="space-y-4">
+    <div class="text-center py-12 md:py-16 text-slate-500">
+      <p>No hay administradores</p>
+    </div>
+  </div>
+</section>
+
+<!-- Reportes Section -->
+<section id="section-reportes" class="hidden fade-in">
+  <div class="mb-6 md:mb-8">
+    <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Reportes y Estadísticas</h2>
+    <p class="text-sm md:text-base text-slate-400">Análisis detallado del sistema de sugerencias</p>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+    <!-- Por Estado -->
+    <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-4 sm:p-6">
+      <h3 class="text-lg font-bold text-white mb-4 sm:mb-6">Sugerencias por Estado</h3>
+      <div id="stats-estado" class="space-y-4">
+        <p class="text-slate-500 text-center py-6 sm:py-8">Sin datos</p>
+      </div>
+    </div>
+    <!-- Por Prioridad -->
+    <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-4 sm:p-6">
+      <h3 class="text-lg font-bold text-white mb-4 sm:mb-6">Por Prioridad</h3>
+      <div id="stats-prioridad" class="space-y-4">
+        <p class="text-slate-500 text-center py-6 sm:py-8">Sin datos</p>
+      </div>
+    </div>
+    <!-- Actividad por Representante -->
+    <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-4 sm:p-6 lg:col-span-2">
+      <h3 class="text-lg font-bold text-white mb-4 sm:mb-6">Top Representantes por Sugerencias</h3>
+      <div id="stats-representantes" class="space-y-3">
+        <p class="text-slate-500 text-center py-6 sm:py-8">Sin datos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Toast Container -->
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2 w-full max-w-[90%] sm:max-w-sm mx-auto left-0 right-0 sm:left-auto"></div>
+
+<!-- Logout Modal -->
+<div id="logout-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-sm w-full mx-auto">
+    <div class="text-center">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
-       <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-       </svg>
+        <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
       </div>
       <h3 class="text-xl font-bold text-white mb-2">¿Cerrar sesión?</h3>
       <p class="text-slate-400 mb-6">Se cerrará tu sesión de administrador.</p>
-      <div class="flex gap-3">
-       <button onclick="closeLogoutModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="confirmLogout()" class="flex-1 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-colors">Cerrar Sesión</button>
+      <div class="flex flex-col-reverse sm:flex-row gap-3">
+        <button onclick="closeLogoutModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> 
+        <button onclick="confirmLogout()" class="flex-1 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-colors">Cerrar Sesión</button>
       </div>
-     </div>
     </div>
-   </div><!-- Account Modal -->
-   <div id="account-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
-    <div id="toast-container2" class="fixed top-4 right-4 z-50 space-y-2"></div>
-    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-md w-full my-4">
-     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-2xl font-bold text-white">Mi Cuenta</h3><button onclick="closeAccountModal()" class="text-slate-400 hover:text-white">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-       </svg></button>
-     </div>
-     <div class="space-y-6">
+  </div>
+</div>
+
+<!-- Account Modal -->
+<div id="account-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+  <div id="toast-container2" class="fixed top-4 right-4 z-50 space-y-2 w-full max-w-[90%] sm:max-w-sm mx-auto left-0 right-0 sm:left-auto"></div>
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 p-4 sm:p-6 max-w-md w-full my-auto mx-auto max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6 sticky top-0 bg-slate-800 py-2">
+      <h3 class="text-xl md:text-2xl font-bold text-white">Mi Cuenta</h3>
+      <button onclick="closeAccountModal()" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="space-y-6">
       <div class="text-center">
-       <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-2xl text-white font-bold">
-        <span id="account-initials">AD</span>
-       </div>
-       <p class="text-lg font-bold text-white" id="account-name">Administrador</p>
-       <p class="text-sm text-slate-400">Sistema Administrativo</p>
+        <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center text-2xl text-white font-bold">
+          <span id="account-initials">AD</span>
+        </div>
+        <p class="text-lg font-bold text-white" id="account-name">Administrador</p>
+        <p class="text-sm text-slate-400">Sistema Administrativo</p>
       </div>
       <div class="border-t border-slate-700/50 pt-6">
-       <h4 class="font-semibold text-white mb-3 flex items-center gap-2">
-        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg> Cambiar Contraseña</h4><input type="password" id="input-current-pwd" placeholder="Contraseña actual" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-2"> <input type="password" id="input-new-pwd" placeholder="Nueva contraseña" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-2"> <input type="password" id="input-confirm-pwd" placeholder="Confirmar contraseña" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 mb-3"> <button onclick="updateAdminPassword()" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors">Actualizar Contraseña</button>
+        <h4 class="font-semibold text-white mb-4 flex items-center gap-2 text-sm md:text-base">
+          <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg> Cambiar Contraseña
+        </h4>
+        <div class="space-y-3">
+          <input type="password" id="input-current-pwd" placeholder="Contraseña actual" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"> 
+          <input type="password" id="input-new-pwd" placeholder="Nueva contraseña" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"> 
+          <input type="password" id="input-confirm-pwd" placeholder="Confirmar contraseña" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"> 
+          <button onclick="updateAdminPassword()" class="w-full px-4 py-3 sm:py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors mt-2">Actualizar Contraseña</button>
+        </div>
       </div>
-     </div>
     </div>
-   </div><!-- Create Representative Modal -->
-   <div id="create-representative-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
-    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-md w-full my-4">
-     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-2xl font-bold text-white">Crear Representante</h3><button onclick="closeCreateRepresentativeModal()" class="text-slate-400 hover:text-white">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-       </svg></button>
-     </div>
-     <div class="space-y-4">
-      <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Nombre</label> <input type="text" id="input-rep-nombre" placeholder="Ej: Juan Pérez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
-      </div>
-      <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> <input type="text" id="input-rep-usuario" placeholder="Ej: juan.perez" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
-      </div>
-      <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> <input type="password" id="input-rep-password" placeholder="Contraseña inicial" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
-      </div>
-      <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Representados</label> 
-       <div id="contenedor-representados" class="space-y-4"></div>
+  </div>
+</div>
 
-      <button onclick="agregarFormularioRepresentado()"
-        class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg">
-        + Agregar representado
+<!-- Crear modal Admin -->
+<div id="create-Admin-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 p-4 sm:p-6 max-w-md w-full my-auto mx-auto max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6 sticky top-0 bg-slate-800 py-2">
+      <h3 class="text-xl md:text-2xl font-bold text-white">Crear administrador</h3>
+      <button onclick="closeCreateAdminModal()" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
       </button>
-      </div>
-      <div class="flex gap-3 pt-4">
-       <button onclick="closeCreateRepresentativeModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="createRepresentative()" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Crear</button>
-      </div>
-     </div>
     </div>
-   </div><!-- Response Modal -->
-   <div id="response-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
-    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-2xl w-full my-4">
-     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-2xl font-bold text-white">Responder Sugerencia</h3><button onclick="closeResponseModal()" class="text-slate-400 hover:text-white">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-       </svg></button>
-     </div>
-     <div class="space-y-4 mb-6 max-h-60 overflow-y-auto">
+    <div class="space-y-4">
       <div>
-       <p class="text-sm text-slate-400">Título</p>
-       <p id="response-titulo" class="text-white font-medium"></p>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Nombre</label> 
+        <input type="text" id="input-adm-nombre" placeholder="Ej: Juan Pérez" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
       </div>
       <div>
-       <p class="text-sm text-slate-400">Descripción</p>
-       <p id="response-descripcion" class="text-slate-300 text-sm"></p>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> 
+        <input type="text" id="input-adm-usuario" placeholder="Ej: juan.perez" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
       </div>
-      <div class="grid grid-cols-3 gap-4">
-       <div>
-        <p class="text-sm text-slate-400">Categoría</p>
-        <p id="response-categoria" class="text-white font-medium"></p>
-       </div>
-       <div>
-        <p class="text-sm text-slate-400">Prioridad</p>
-        <p id="response-prioridad" class="text-white font-medium"></p>
-       </div>
-       <div>
-        <p class="text-sm text-slate-400">Estado Actual</p>
-        <p id="response-estado" class="text-white font-medium"></p>
-       </div>
-      </div>
-     </div>
-     <div class="border-t border-slate-700/50 pt-6 space-y-4">
       <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Nuevo Estado *</label> <select id="response-new-estado" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="en_revision">En Revisión</option> <option value="respondida">Respondida</option> <option value="aprobada">Aprobada</option> <option value="rechazada">Rechazada</option> </select>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
+        <input type="password" id="input-adm-password" placeholder="Contraseña inicial" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      
+      <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+        <button onclick="closeCreateAdminModal()" class="flex-1 px-4 py-3 sm:py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> 
+        <button onclick="createAdmin()" class="flex-1 px-4 py-3 sm:py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Representative Modal -->
+<div id="create-representative-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 p-4 sm:p-6 max-w-md w-full my-auto mx-auto max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6 sticky top-0 bg-slate-800 py-2">
+      <h3 class="text-xl md:text-2xl font-bold text-white">Crear Representante</h3>
+      <button onclick="closeCreateRepresentativeModal()" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Nombre</label> 
+        <input type="text" id="input-rep-nombre" placeholder="Ej: Juan Pérez" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label> 
+        <input type="text" id="input-rep-usuario" placeholder="Ej: juan.perez" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Contraseña</label> 
+        <input type="password" id="input-rep-password" placeholder="Contraseña inicial" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Representados</label> 
+        <div id="contenedor-representados" class="space-y-4"></div>
+        <button onclick="agregarFormularioRepresentado()" class="mt-3 w-full sm:w-auto px-4 py-3 sm:py-2 bg-blue-500 text-white rounded-lg">
+          + Agregar representado
+        </button>
+      </div>
+      <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+        <button onclick="closeCreateRepresentativeModal()" class="flex-1 px-4 py-3 sm:py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> 
+        <button onclick="createRepresentative()" class="flex-1 px-4 py-3 sm:py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Crear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Response Modal -->
+<div id="response-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 p-4 sm:p-6 max-w-2xl w-full my-auto mx-auto max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
+      <h3 class="text-xl md:text-2xl font-bold text-white">Responder Sugerencia</h3>
+      <button onclick="closeResponseModal()" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="space-y-4 mb-6 overflow-y-auto pr-2 custom-scrollbar">
+      <div>
+        <p class="text-xs sm:text-sm text-slate-400">Título</p>
+        <p id="response-titulo" class="text-white font-medium text-sm sm:text-base"></p>
+      </div>
+      <div>
+        <p class="text-xs sm:text-sm text-slate-400">Descripción</p>
+        <p id="response-descripcion" class="text-slate-300 text-sm"></p>
+      </div>
+      <!-- Ajustado para móviles: grid-cols-1 y sm:grid-cols-3 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+        <div>
+          <p class="text-xs text-slate-400">Categoría</p>
+          <p id="response-categoria" class="text-white font-medium text-sm"></p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Prioridad</p>
+          <p id="response-prioridad" class="text-white font-medium text-sm"></p>
+        </div>
+        <div>
+          <p class="text-xs text-slate-400">Estado Actual</p>
+          <p id="response-estado" class="text-white font-medium text-sm"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-slate-700/50 pt-4 sm:pt-6 space-y-4 shrink-0">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Nuevo Estado *</label> 
+        <select id="response-new-estado" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"> 
+          <option value="en_revision">En Revisión</option> 
+          <option value="respondida">Respondida</option> 
+          <option value="aprobada">Aprobada</option> 
+          <option value="rechazada">Rechazada</option> 
+        </select>
       </div>
 
       <div id="response-preview" class="hidden p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg mb-3">
@@ -542,39 +697,95 @@
       </div>
 
       <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Tu Respuesta *</label> <textarea id="response-text" rows="4" placeholder="Escribe tu respuesta aquí..." class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"></textarea>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Tu Respuesta *</label> 
+        <textarea id="response-text" rows="4" placeholder="Escribe tu respuesta aquí..." class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"></textarea>
       </div>
-      <div class="flex gap-3">
-       <button onclick="closeResponseModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="enviarRespuesta()" id="response-send-btn" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Enviar</button>
+      <div class="flex flex-col-reverse sm:flex-row gap-3">
+        <button onclick="closeResponseModal()" class="flex-1 px-4 py-3 sm:py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> 
+        <button onclick="enviarRespuesta()" id="response-send-btn" class="flex-1 px-4 py-3 sm:py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Enviar</button>
       </div>
-     </div>
     </div>
-   </div><!-- Edit Representative Modal -->
-   <div id="edit-representative-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
-    <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-md w-full my-4">
-     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-2xl font-bold text-white">Editar Representante</h3><button onclick="closeEditRepresentativeModal()" class="text-slate-400 hover:text-white">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-       </svg></button>
-     </div>
-     <div class="space-y-4">
-      <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Nombre Completo</label> <input type="text" id="edit-rep-nombre" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
-      </div>
-      <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Email</label> <input type="email" id="edit-rep-email" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
-      </div>
-      <div>
-       <label class="block text-sm font-medium text-slate-300 mb-2">Estado</label> <select id="edit-rep-estado" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"> <option value="activo">Activo</option> <option value="inactivo">Inactivo</option> </select>
-      </div>
-      <div class="flex gap-3 pt-4">
-       <button onclick="closeEditRepresentativeModal()" class="flex-1 px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button> <button onclick="saveEditRepresentative()" class="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Guardar</button>
-      </div>
-     </div>
-    </div>
-   </div>
   </div>
+</div>
+
+<!-- Edit Representative Modal -->
+<div id="edit-representative-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 p-4 sm:p-6 max-w-md w-full my-auto mx-auto max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6 sticky top-0 bg-slate-800 py-2">
+      <h3 class="text-xl md:text-2xl font-bold text-white">Editar Representante</h3>
+      <button onclick="closeEditRepresentativeModal()" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Nombre Completo</label>
+        <input type="text" id="edit-rep-nombre" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label>
+        <input type="text" id="edit-rep-usuario" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Nueva Contraseña (opcional)</label>
+        <input type="password" id="edit-rep-password" placeholder="Dejar en blanco para no cambiar" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Estado</label>
+        <select id="edit-rep-estado" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+        <button onclick="closeEditRepresentativeModal()" class="flex-1 px-4 py-3 sm:py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button>
+        <button onclick="saveEditRepresentative()" class="flex-1 px-4 py-3 sm:py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Admin Modal -->
+<div id="edit-Admin-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-auto">
+  <div class="bg-slate-800 rounded-2xl border border-slate-700 p-4 sm:p-6 max-w-md w-full my-auto mx-auto max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6 sticky top-0 bg-slate-800 py-2">
+      <h3 class="text-xl md:text-2xl font-bold text-white">Editar Administrador</h3>
+      <button onclick="closeEditAdminModal()" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Nombre Completo</label>
+        <input type="text" id="edit-adm-nombre" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Usuario</label>
+        <input type="text" id="edit-adm-usuario" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Nueva Contraseña (opcional)</label>
+        <input type="password" id="edit-adm-password" placeholder="Dejar en blanco para no cambiar" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-2">Estado</label>
+        <select id="edit-adm-estado" class="w-full px-4 py-3 sm:py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500/50">
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+        <button onclick="closeEditAdminModal()" class="flex-1 px-4 py-3 sm:py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium">Cancelar</button>
+        <button onclick="saveEditAdmin()" class="flex-1 px-4 py-3 sm:py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <script type="module">
 
     // Import the functions you need from the SDKs you need
@@ -616,6 +827,7 @@
     // Arrays para almacenar datos de sugerencias y representantes
     let todasLasSugerencias = [];
     let representantes = [];
+    let administradores = [];
     let temaActual = 'dark';
     // MENU
     const btnMenu = document.getElementById("boton-menu");
@@ -689,6 +901,11 @@
       borde: '#334155'
     };
 
+    if (adminActual.usuario.rol == "superAdministrador") {
+      document.getElementById("sectionAdmin").classList.remove('hidden');
+    }
+
+    //console.log(adminActual.usuario.rol)
     
 
     // ========== CONEXIÓN CON FIREBASE ==========
@@ -696,7 +913,7 @@
     function conectarFirebase() {
       referenciasSugerencias = ref(db, 'sugerencias');
       referenciasRepresentantes = ref(db, 'representantes');
-      //referenciaAdmin = ref(db, 'admin');
+      referenciaAdmin = ref(db, 'administradores');
 
       onValue(referenciasSugerencias, (snapshot) => {
         if (snapshot.exists()) {
@@ -726,6 +943,20 @@
         actualizarActividadReciente();
         actualizarListaSugerencias()
         actualizarEstadisticasGenerales()
+      });
+
+      onValue(referenciaAdmin, (snapshot) => {
+        if (snapshot.exists()) {
+          const datos = snapshot.val();
+          administradores = Object.keys(datos).map(id => ({
+            id,
+            ...datos[id]
+          }));
+        } else {
+          administradores = [];
+        }
+        actualizarListaAdministradores();
+        actualizarBadges();
       });
 
       //onValue(referenciaAdmin, (snapshot) => {
@@ -795,6 +1026,7 @@
     function actualizarBadges() {
       document.getElementById('badge-sugerencias').textContent = todasLasSugerencias.length;
       document.getElementById('badge-representantes').textContent = representantes.length;
+      document.getElementById('badge-administradores').textContent = administradores.length;
     }
 
     // ========== ACTUALIZAR ACTIVIDAD RECIENTE ==========
@@ -926,48 +1158,61 @@
     // ========== ACTUALIZAR LISTA DE REPRESENTANTES ==========
     // Muestra todos los representantes registrados con opciones de editar y eliminar
     function actualizarListaRepresentantes() {
-      const contenedor = document.getElementById('representantes-list');
+    const contenedor = document.getElementById('representantes-list');
 
-      if (representantes.length === 0) {
-        contenedor.innerHTML = '<div class="text-center py-16 text-slate-500"><p>No hay representantes</p></div>';
-        return;
-      }
+    if (representantes.length === 0) {
+      contenedor.innerHTML = '<div class="text-center py-12 sm:py-16 text-slate-500"><p>No hay representantes</p></div>';
+      return;
+    }
 
-      contenedor.innerHTML = representantes.map((r, indice) => {
-        const iniciales = r.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-        const esActivo = r.estado === 'activo';
-        return `
-          <div class="card-hover bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4 flex-1">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">
-                  ${iniciales}
-                </div>
-                <div>
-                  <h3 class="font-bold text-white">${escaparHtml(r.nombre)}</h3>
-                  <p class="text-sm text-slate-400">@${escaparHtml(r.usuario)}</p>
-                </div>
+    contenedor.innerHTML = representantes.map((r, indice) => {
+      const iniciales = r.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+      const esActivo = r.estado === 'activo';
+      
+      return `
+        <div class="card-hover bg-slate-800/50 rounded-2xl border border-slate-700/50 p-4 sm:p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            
+            <!-- Información del representante -->
+            <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                ${iniciales}
               </div>
-              <div class="flex items-center gap-3">
-                <span class="px-3 py-1 rounded-lg text-xs font-medium ${esActivo ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}">
-                  ${esActivo ? '● Activo' : '● Inactivo'}
-                </span>
-                <button onclick="abrirModalEditarRepresentante('${r.id}')" class="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors">
+              <div class="min-w-0 flex-1">
+                <h3 class="font-bold text-white text-base sm:text-lg truncate" title="${escaparHtml(r.nombre)}">
+                  ${escaparHtml(r.nombre)}
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-400 truncate" title="@${escaparHtml(r.usuario)}">
+                  @${escaparHtml(r.usuario)}
+                </p>
+              </div>
+            </div>
+
+            <!-- Estado y Botones de acción -->
+            <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t border-slate-700/50 sm:border-0 pt-3 sm:pt-0 mt-1 sm:mt-0">
+              <span class="px-2.5 py-1 sm:px-3 sm:py-1 rounded-lg text-xs font-medium whitespace-nowrap ${esActivo ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}">
+                ${esActivo ? '● Activo' : '● Inactivo'}
+              </span>
+              
+              <div class="flex items-center gap-1 sm:gap-2">
+                <button onclick="abrirModalEditarRepresentante('${r.id}')" class="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors" title="Editar">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
                 </button>
-                <button onclick="eliminarRepresentante('${r.id}')" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+                <button onclick="eliminarRepresentante('${r.id}')" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Eliminar">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
               </div>
             </div>
+
           </div>
-        `;
-      }).join('');
-    }
+        </div>
+      `;
+    }).join('');
+  }
 
     // ========== ACTUALIZAR ESTADÍSTICAS GENERALES ==========
     // Calcula y muestra gráficos de estadísticas por estado, prioridad y representante
@@ -1143,6 +1388,73 @@
       }
     }
 
+    // ========== GESTIÓN DE ADMINISTRADORES ==========
+
+    // Abre modal para crear un nuevo administrador
+    window.openCreateAdminModal = function() {
+      document.getElementById('input-adm-nombre').value = '';
+      document.getElementById('input-adm-usuario').value = '';
+      document.getElementById('input-adm-password').value = '';
+      document.getElementById('create-Admin-modal').classList.remove('hidden');
+    }
+
+    // Cierra modal de crear administrador
+    window.closeCreateAdminModal = function() {
+      document.getElementById('create-Admin-modal').classList.add('hidden');
+    }
+
+    // Crea un nuevo administrador en Firebase
+    window.createAdmin = function() {
+      const nombre = document.getElementById('input-adm-nombre').value.trim();
+      const user = document.getElementById('input-adm-usuario').value.trim().toLowerCase();
+      const contrasena = document.getElementById('input-adm-password').value.trim();
+
+      // Validación de campos vacíos
+      if (!nombre || !user || !contrasena) {
+        mostrarNotificacion('Completa todos los datos del administrador', 'error');
+        return;
+      }
+
+      try {
+        // Referencia a la colección de administradores en tu base de datos
+        const refAdministradores = ref(db, 'administradores');
+
+        // 🔥 Generar ID aleatorio automático
+        const nuevoRef = push(refAdministradores);
+
+        // Guardar los datos
+        set(nuevoRef, {
+          nombre,
+          user,
+          contrasena,
+          estado: 'activo',
+          rol: 'administrador', // Recomendable agregar un campo de rol para control de accesos
+          fecha_creacion: new Date().toISOString()
+        })
+        .then(() => {
+          // Limpiar el formulario
+          document.getElementById('input-adm-nombre').value = '';
+          document.getElementById('input-adm-usuario').value = '';
+          document.getElementById('input-adm-password').value = '';
+
+          // Cerrar modal y notificar éxito
+          closeCreateAdminModal();
+          mostrarNotificacion('Administrador creado correctamente', 'success');
+          
+          // Aquí podrías llamar a una función para recargar la lista en la UI si la tienes
+          // cargarListaAdministradores(); 
+        })
+        .catch((error) => {
+          console.error("Error en Firebase:", error);
+          mostrarNotificacion('Error al guardar en la base de datos', 'error');
+        });
+
+      } catch (error) {
+        console.error("Error en ejecución:", error);
+        mostrarNotificacion('Error inesperado', 'error');
+      }
+    };
+
     // ========== GESTIÓN DE REPRESENTANTES ==========
     // Abre modal para crear un nuevo representante
     window.openCreateRepresentativeModal = function() {
@@ -1275,13 +1587,44 @@
       }
     };
 
+    function toggleMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const isHidden = sidebar.classList.contains('-translate-x-full');
+
+    if (isHidden) {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+      // Opcional: Cambiar icono a una "X"
+      document.getElementById('menu-icon-path').setAttribute('d', 'M6 18L18 6M6 6l12 12');
+    } else {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+      // Volver a icono de hamburguesa
+      document.getElementById('menu-icon-path').setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+    }
+  }
+
+  // Cerrar menú al hacer clic en una opción (solo en móvil)
+  document.querySelectorAll('.sidebar-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (window.innerWidth < 768) toggleMenu();
+    });
+  });
+
     // Abre modal para editar un representante
     window.abrirModalEditarRepresentante = function(representanteId) {
       representanteEnEdicion = representantes.find(r => r.id === representanteId);
       if (!representanteEnEdicion) return;
 
       document.getElementById('edit-rep-nombre').value = representanteEnEdicion.nombre;
+      // Cargamos el usuario en vez del email
+      document.getElementById('edit-rep-usuario').value = representanteEnEdicion.user || '';
       document.getElementById('edit-rep-estado').value = representanteEnEdicion.estado;
+      
+      // Limpiamos el campo de contraseña cada vez que abrimos el modal
+      document.getElementById('edit-rep-password').value = '';
+
       document.getElementById('edit-representative-modal').classList.remove('hidden');
     }
 
@@ -1296,18 +1639,31 @@
       if (!representanteEnEdicion) return;
 
       const nombreInput = document.getElementById('edit-rep-nombre');
-      const emailInput = document.getElementById('edit-rep-email');
+      const usuarioInput = document.getElementById('edit-rep-usuario');
       const estadoInput = document.getElementById('edit-rep-estado');
+      const passwordInput = document.getElementById('edit-rep-password');
 
       const nombre = nombreInput.value.trim();
-      const email = emailInput.value.trim();
+      const user = usuarioInput.value.trim().toLowerCase();
       const estado = estadoInput.value;
+      const nuevaContrasena = passwordInput.value.trim();
 
       // Validación básica
-      if (!nombre) {
-        mostrarNotificacion('El nombre no puede estar vacío', 'error');
-        nombreInput.focus();
+      if (!nombre || !user) {
+        mostrarNotificacion('El nombre y el usuario son obligatorios', 'error');
         return;
+      }
+
+      // Objeto de actualización
+      const datosActualizados = {
+        nombre,
+        user,
+        estado
+      };
+
+      // Solo agregamos la contraseña al objeto si el usuario escribió algo
+      if (nuevaContrasena !== "") {
+        datosActualizados.contrasena = nuevaContrasena;
       }
 
       const btn = document.querySelector('#edit-representative-modal button:last-child');
@@ -1316,29 +1672,25 @@
       try {
         const referenciaRepresentante = ref(db, `representantes/${representanteEnEdicion.id}`);
 
-        update(referenciaRepresentante, {
-          nombre,
-          email,
-          estado
-        })
-        .then(() => {
-          closeEditRepresentativeModal();
-          mostrarNotificacion('Representante actualizado', 'success');
-        })
-        .catch((error) => {
-          console.error('Error al actualizar representante:', error);
-          mostrarNotificacion('Error al actualizar el representante', 'error');
-        })
-        .finally(() => {
-          btn.disabled = false;
-        });
+        update(referenciaRepresentante, datosActualizados)
+          .then(() => {
+            closeEditRepresentativeModal();
+            mostrarNotificacion('Representante actualizado correctamente', 'success');
+          })
+          .catch((error) => {
+            console.error('Error al actualizar representante:', error);
+            mostrarNotificacion('Error al actualizar el representante', 'error');
+          })
+          .finally(() => {
+            btn.disabled = false;
+          });
 
       } catch (error) {
         console.error('Error inesperado:', error);
         mostrarNotificacion('Error inesperado', 'error');
         btn.disabled = false;
       }
-    }
+    };
 
     // Elimina un representante de Firebase
     function eliminarRepresentante(representanteId) {
@@ -1361,6 +1713,189 @@
           .catch((error) => {
             console.error('Error al eliminar representante:', error);
             mostrarNotificacion('Error al eliminar el representante', 'error');
+          })
+          .finally(() => {
+            btns.forEach(btn => btn.disabled = false);
+          });
+
+      } catch (error) {
+        console.error('Error inesperado:', error);
+        mostrarNotificacion('Error inesperado', 'error');
+        btns.forEach(btn => btn.disabled = false);
+      }
+    }
+
+    // Variable global para almacenar el administrador en edición
+    let adminEnEdicion = null;
+
+    // ========== GESTIÓN DE ADMINISTRADORES ==========
+
+    function actualizarListaAdministradores() {
+      const contenedor = document.getElementById('administradores-list');
+
+      if (!administradores || administradores.length === 0) {
+        contenedor.innerHTML = '<div class="text-center py-12 sm:py-16 text-slate-500"><p>No hay administradores</p></div>';
+        return;
+      }
+
+      contenedor.innerHTML = administradores.map((admin, indice) => {
+        const iniciales = admin.nombre.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+        const esActivo = admin.estado === 'activo';
+        
+        return `
+          <div class="card-hover bg-slate-800/50 rounded-2xl border border-slate-700/50 p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              
+              <!-- Lado Izquierdo: Avatar e Info -->
+              <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                  ${iniciales}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-bold text-white text-base sm:text-lg truncate">
+                    ${escaparHtml(admin.nombre)}
+                  </h3>
+                  <p class="text-xs sm:text-sm text-slate-400 truncate">
+                    @${escaparHtml(admin.user)}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Lado Derecho: Estado y Acciones -->
+              <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t border-slate-700/40 sm:border-0 pt-3 sm:pt-0 mt-1 sm:mt-0">
+                <!-- Etiqueta de Estado -->
+                <span class="px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-medium uppercase tracking-wider ${esActivo ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700/50 text-slate-400'}">
+                  ${esActivo ? '● Activo' : '● Inactivo'}
+                </span>
+                
+                <!-- Grupo de botones -->
+                <div class="flex items-center gap-1 sm:gap-2">
+                  <button onclick="abrirModalEditarAdministrador('${admin.id}')" class="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors" title="Editar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button onclick="eliminarAdministrador('${admin.id}')" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors" title="Eliminar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Abre modal para editar un administrador
+    window.abrirModalEditarAdministrador = function(adminId) {
+      adminEnEdicion = administradores.find(a => a.id === adminId);
+      if (!adminEnEdicion) return;
+
+      document.getElementById('edit-adm-nombre').value = adminEnEdicion.nombre;
+      
+      // Se asume que el HTML tendrá un input para el usuario
+      const inputUsuario = document.getElementById('edit-adm-usuario');
+      if(inputUsuario) inputUsuario.value = adminEnEdicion.user;
+
+      // Limpiar el campo de contraseña al abrir el modal
+      document.getElementById('edit-adm-password').value = '';
+      
+      document.getElementById('edit-adm-estado').value = adminEnEdicion.estado;
+      document.getElementById('edit-Admin-modal').classList.remove('hidden');
+    }
+
+    // Cierra modal de editar administrador
+    window.closeEditAdminModal = function() {
+      document.getElementById('edit-Admin-modal').classList.add('hidden');
+      adminEnEdicion = null;
+    }
+
+    // Guarda los cambios del administrador en Firebase
+    window.saveEditAdmin = function() {
+    if (!adminEnEdicion) return;
+
+    const nombreInput = document.getElementById('edit-adm-nombre');
+    const usuarioInput = document.getElementById('edit-adm-usuario'); 
+    const estadoInput = document.getElementById('edit-adm-estado');
+    const passwordInput = document.getElementById('edit-adm-password'); // Nuevo campo
+
+    const nombre = nombreInput.value.trim();
+    const user = usuarioInput ? usuarioInput.value.trim().toLowerCase() : adminEnEdicion.user;
+    const estado = estadoInput.value;
+    const nuevaContrasena = passwordInput.value.trim();
+
+    if (!nombre) {
+      mostrarNotificacion('El nombre no puede estar vacío', 'error');
+      nombreInput.focus();
+      return;
+    }
+
+    // Preparamos el objeto con los datos básicos
+    const datosActualizados = {
+      nombre,
+      user,
+      estado
+    };
+
+    // 🔐 Solo agregamos la contraseña si el usuario escribió algo
+    if (nuevaContrasena !== "") {
+      datosActualizados.contrasena = nuevaContrasena;
+    }
+
+    const btn = document.querySelector('#edit-Admin-modal button:last-child');
+    if(btn) btn.disabled = true;
+
+    try {
+      const referenciaAdmin = ref(db, `administradores/${adminEnEdicion.id}`);
+
+      // Usamos update para que solo afecte los campos enviados
+      update(referenciaAdmin, datosActualizados)
+      .then(() => {
+        // Limpiar el campo de contraseña para la próxima vez
+        passwordInput.value = ''; 
+        
+        closeEditAdminModal();
+        mostrarNotificacion('Administrador actualizado correctamente', 'success');
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error al actualizar', 'error');
+      })
+      .finally(() => {
+        if(btn) btn.disabled = false;
+      });
+
+    } catch (error) {
+      console.error('Error inesperado:', error);
+      mostrarNotificacion('Error inesperado', 'error');
+      if(btn) btn.disabled = false;
+    }
+  }
+
+    // Elimina un administrador de Firebase
+    window.eliminarAdministrador = function(adminId) {
+      if (!adminId) return;
+
+      // Confirmación antes de eliminar
+      const confirmar = confirm('¿Seguro que deseas eliminar esta cuenta de administrador?');
+      if (!confirmar) return;
+
+      const btns = document.querySelectorAll(`button[onclick="eliminarAdministrador('${adminId}')"]`);
+      btns.forEach(btn => btn.disabled = true);
+
+      try {
+        const referenciaAdmin = ref(db, `administradores/${adminId}`);
+
+        remove(referenciaAdmin)
+          .then(() => {
+            mostrarNotificacion('Administrador eliminado', 'success');
+          })
+          .catch((error) => {
+            console.error('Error al eliminar administrador:', error);
+            mostrarNotificacion('Error al eliminar el administrador', 'error');
           })
           .finally(() => {
             btns.forEach(btn => btn.disabled = false);
