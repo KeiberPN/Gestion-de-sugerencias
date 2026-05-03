@@ -105,148 +105,147 @@
   </style>
   <style>body { box-sizing: border-box; }</style>
  </head>
- <body class="h-full bg-slate-900 text-slate-100 overflow-auto">
-  <button id="boton-menu"
-  class="md:hidden fixed top-4 left-4 z-50 bg-slate-800 p-2 rounded-lg border border-slate-700">
+ <body class="h-screen bg-slate-950 text-slate-100 overflow-hidden">
+  
+  <!-- Overlay para móviles -->
+  <div id="sidebar-overlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden md:hidden transition-opacity duration-300"></div>
+
+  <!-- Botón de Menú Móvil -->
+  <button id="boton-menu" onclick="toggleMenu()"
+    class="md:hidden fixed top-4 left-4 z-50 bg-slate-800/90 backdrop-blur-md p-2.5 rounded-xl border border-slate-700 shadow-xl active:scale-95 transition-transform">
     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M4 6h16M4 12h16M4 18h16"/>
+      <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
     </svg>
   </button>
-  <div id="app" class="h-full w-full flex relative"><!-- Sidebar -->
-   <aside id="sidebar"class="fixed md:relative z-40 w-72 h-full md:h-auto bg-slate-800/50 backdrop-blur-xl border-r border-slate-700/50 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300"><!-- Logo & User -->
-    <div class="p-6 border-b border-slate-700/50">
-     <div class="flex items-center gap-3 mb-6">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
-       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-       </svg>
-      </div>
-      <div>
-       <h1 id="panel-title" class="font-bold text-lg text-white">Panel de Representantes</h1>
-       <p class="text-xs text-slate-400">Sistema de Sugerencias</p>
-      </div>
-     </div>
-     <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl">
-      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold" id="abr_rep">
-       JD
-      </div>
-      <div class="flex-1 min-w-0">
-       <p class="font-medium text-sm text-white truncate" id="nombre_rep">Juan Díaz</p>
-       <p class="text-xs text-slate-400">Representante</p>
-      </div><span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
-     </div>
-    </div><!-- Navigation -->
-    <nav class="flex-1 p-4 space-y-2">
-      <button onclick="mostrarSeccion('dashboard')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors bg-emerald-500/20 text-emerald-400" data-section="dashboard">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-        </svg>
-        <span class="font-medium">Dashboard</span> 
-      </button> 
-      <button onclick="mostrarSeccion('nueva')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="nueva">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg> 
-        <span class="font-medium">Nueva Sugerencia</span> 
-      </button> 
 
-      <button onclick="mostrarSeccion('listado')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors text-slate-300 hover:bg-slate-700/50" data-section="listado">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-        <span class="font-medium">Mis Sugerencias</span> 
-        <span id="badge-count" class="ml-auto bg-emerald-500/20 text-emerald-400 text-xs font-semibold px-2 py-0.5 rounded-full">0</span> 
-      </button> 
-    </nav>
-    <div class="p-4 border-t border-slate-700/50 space-y-2">
-     <button onclick="cambiarTema()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-colors">
-      <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg><span class="font-medium" id="theme-text">Tema Claro</span> </button>
-    </div><!-- Logout -->
-    <div class="p-4 border-t border-slate-700/50"><button onclick="manejarCerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-      </svg><span class="font-medium">Cerrar Sesión</span> </button>
-    </div>
-   </aside>
-   <!-- Main Content -->
-   <main class="flex-1 overflow-auto md:ml-0">
-    <div class="p-8">
-      <!-- Dashboard Section -->
-     <section id="section-dashboard" class="fade-in">
-      <div class="mb-8">
-       <h2 id="welcome-message" class="text-3xl font-bold text-white mb-2">Bienvenido al Sistema</h2>
-       <p class="text-slate-400">Gestiona y da seguimiento a todas las sugerencias de tu comunidad</p>
-      </div><!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-       <div class="card-hover bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-2xl border border-slate-700/50">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
-          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-         </div><span class="text-xs text-slate-500 uppercase tracking-wider">Total</span>
+  <div id="app" class="h-full w-full flex relative">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed md:relative z-40 w-72 h-full bg-slate-900 md:bg-slate-800/50 backdrop-blur-xl border-r border-slate-700/50 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+      <!-- Logo & User -->
+      <div class="p-6 border-b border-slate-700/50">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <h1 class="font-bold text-lg text-white truncate">Panel Representantes</h1>
+            <p class="text-xs text-slate-400">Sistema de Sugerencias</p>
+          </div>
         </div>
-        <p id="stat-total" class="text-4xl font-bold text-white mb-1">0</p>
-        <p class="text-sm text-slate-400">Sugerencias enviadas</p>
-       </div>
-       <div class="card-hover bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-2xl border border-slate-700/50">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
-          <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-         </div><span class="text-xs text-slate-500 uppercase tracking-wider">Pendientes</span>
+        
+        <div class="flex items-center gap-3 p-3 bg-slate-700/30 rounded-xl border border-transparent hover:border-slate-600/50 transition-all cursor-pointer">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold shrink-0" id="abr_rep">
+            JD
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-sm text-white truncate" id="nombre_rep">Juan Díaz</p>
+            <p class="text-xs text-slate-400">Representante</p>
+          </div>
+          <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot shrink-0"></span>
         </div>
-        <p id="stat-pendientes" class="text-4xl font-bold text-amber-400 mb-1">0</p>
-        <p class="text-sm text-slate-400">En espera de revisión</p>
-       </div>
-       <div class="card-hover bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-2xl border border-slate-700/50">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
-          <svg class="w-6 h-6 text-violet-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-         </div><span class="text-xs text-slate-500 uppercase tracking-wider">En Proceso</span>
-        </div>
-        <p id="stat-proceso" class="text-4xl font-bold text-violet-400 mb-1">0</p>
-        <p class="text-sm text-slate-400">Siendo evaluadas</p>
-       </div>
-       <div class="card-hover bg-gradient-to-br from-slate-800 to-slate-800/50 p-6 rounded-2xl border border-slate-700/50">
-        <div class="flex items-center justify-between mb-4">
-         <div class="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-          <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-         </div><span class="text-xs text-slate-500 uppercase tracking-wider">Resueltas</span>
-        </div>
-        <p id="stat-resueltas" class="text-4xl font-bold text-emerald-400 mb-1">0</p>
-        <p class="text-sm text-slate-400">Implementadas</p>
-       </div>
       </div>
-      <!-- Recent Activity -->
-      <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-       <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
-        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg> Actividad Reciente</h3>
-       <div id="recent-activity" class="space-y-4">
-        <div class="text-center py-8 text-slate-500">
-         <svg class="w-16 h-16 mx-auto mb-4 text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-         </svg>
-         <p>No hay actividad reciente</p>
-         <p class="text-sm mt-1">Las sugerencias que envíes aparecerán aquí</p>
-        </div>
-       </div>
+
+      <!-- Navigation -->
+      <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+        <button onclick="mostrarSeccion('dashboard')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" data-section="dashboard">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+          <span class="font-medium text-sm">Dashboard</span> 
+        </button> 
+        <button onclick="mostrarSeccion('nueva')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/50" data-section="nueva">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg> 
+          <span class="font-medium text-sm">Nueva Sugerencia</span> 
+        </button> 
+        <button onclick="mostrarSeccion('listado')" class="sidebar-item nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all text-slate-300 hover:bg-slate-700/50" data-section="listado">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+          <span class="font-medium text-sm">Mis Sugerencias</span> 
+          <span id="badge-count" class="ml-auto bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2 py-0.5 rounded-lg">0</span> 
+        </button> 
+      </nav>
+
+      <div class="p-4 border-t border-slate-700/50 space-y-1">
+        <button onclick="cambiarTema()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-colors">
+          <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          <span class="font-medium text-sm" id="theme-text">Tema Claro</span>
+        </button>
+        <button onclick="manejarCerrarSesion()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          <span class="font-medium text-sm">Cerrar Sesión</span>
+        </button>
       </div>
-     </section>
-     <!-- Nueva Sugerencia Section -->
-     <section id="section-nueva" class="hidden fade-in">
-      <div class="mb-8">
-       <h2 class="text-3xl font-bold text-white mb-2">Nueva Sugerencia</h2>
-       <p class="text-slate-400">Comparte tu idea para mejorar nuestra comunidad</p>
-      </div>
-      <div class="max-w-2xl">
-       <form id="suggestion-form" class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-8 space-y-6">
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-2">Título de la Sugerencia *</label> 
-          <input type="text" id="input-titulo" required placeholder="Escribe un título descriptivo" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-2">Categoría *</label> 
-          <select id="input-categoria" required class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"> 
-            <option value="">Selecciona una categoría</option> 
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-auto pt-20 md:pt-0 bg-slate-950">
+      <div class="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
+        
+        <!-- Dashboard Section -->
+        <section id="section-dashboard" class="fade-in">
+          <div class="mb-8">
+            <h2 id="welcome-message" class="text-2xl sm:text-3xl font-bold text-white mb-2">Bienvenido al Sistema</h2>
+            <p class="text-sm sm:text-base text-slate-400">Gestiona y da seguimiento a tus sugerencias</p>
+          </div>
+
+          <!-- Stats Cards Adaptadas -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
+            <div class="bg-slate-800/40 p-4 sm:p-6 rounded-2xl border border-slate-700/50">
+              <div class="flex items-center justify-between mb-2 sm:mb-4">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                </div>
+                <span class="text-[10px] text-slate-500 uppercase font-bold">Total</span>
+              </div>
+              <p id="stat-total" class="text-2xl sm:text-3xl font-bold text-white">0</p>
+            </div>
+            
+            <div class="bg-slate-800/40 p-4 sm:p-6 rounded-2xl border border-slate-700/50">
+              <div class="flex items-center justify-between mb-2 sm:mb-4">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+                <span class="text-[10px] text-slate-500 uppercase font-bold">Pendientes</span>
+              </div>
+              <p id="stat-pendientes" class="text-2xl sm:text-3xl font-bold text-amber-400">0</p>
+            </div>
+
+            <div class="bg-slate-800/40 p-4 sm:p-6 rounded-2xl border border-slate-700/50 text-center sm:text-left">
+              <p id="stat-proceso" class="text-2xl sm:text-3xl font-bold text-violet-400">0</p>
+              <p class="text-[10px] text-slate-500 uppercase font-bold mt-1">En Proceso</p>
+            </div>
+
+            <div class="bg-slate-800/40 p-4 sm:p-6 rounded-2xl border border-slate-700/50 text-center sm:text-left">
+              <p id="stat-resueltas" class="text-2xl sm:text-3xl font-bold text-emerald-400">0</p>
+              <p class="text-[10px] text-slate-500 uppercase font-bold mt-1">Resueltas</p>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-5 sm:p-6">
+            <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> 
+              Actividad Reciente
+            </h3>
+            <div id="recent-activity" class="space-y-4 text-center py-10 text-slate-500">
+              <p class="text-sm">No hay actividad reciente</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Formulario Adaptado -->
+        <section id="section-nueva" class="hidden fade-in">
+          <h2 class="text-2xl font-bold text-white mb-6">Nueva Sugerencia</h2>
+          <form id="suggestion-form" class="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-5 sm:p-8 space-y-5">
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-2">Título *</label> 
+              <input type="text" id="input-titulo" required class="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-emerald-500/40 outline-none transition-all">
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Categoría *</label> 
+                <select id="input-categoria" required class="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white outline-none">
+                  <option value="">Selecciona una categoría</option> 
             <option value="infraestructura">🏗️ Infraestructura</option> 
             <option value="servicios">🛠️ Servicios Públicos</option> 
             <option value="seguridad">🛡️ Seguridad</option> 
@@ -256,90 +255,88 @@
             <option value="cultura">🎭 Cultura y Recreación</option> 
             <option value="transporte">🚌 Transporte</option> 
             <option value="otro">📋 Otro</option> 
-          </select>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-2">Prioridad</label>
-          <div class="flex gap-4">
-            <label class="flex-1 cursor-pointer"> 
-              <input type="radio" name="prioridad" value="baja" class="peer sr-only" checked>
-              <div class="p-4 rounded-xl border-2 border-slate-600/50 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 transition-all text-center">
-                <span class="text-2xl">🟢</span>
-                <p class="mt-1 text-sm font-medium text-slate-300">Baja</p>
-             </div>
-            </label> 
-          <label class="flex-1 cursor-pointer"> 
-            <input type="radio" name="prioridad" value="media" class="peer sr-only">
-            <div class="p-4 rounded-xl border-2 border-slate-600/50 peer-checked:border-amber-500 peer-checked:bg-amber-500/10 transition-all text-center">
-              <span class="text-2xl">🟡</span>
-              <p class="mt-1 text-sm font-medium text-slate-300">Media</p>
+                </select>
+               </div>
+               <div>
+                <label class="block text-sm font-medium text-slate-300 mb-2">Prioridad</label>
+                <div class="flex gap-2">
+                  <label class="flex-1">
+                    <input type="radio" name="prioridad" value="baja" class="peer sr-only" checked>
+                    <div class="py-2.5 rounded-lg border border-slate-700 text-center text-xs peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500 transition-all cursor-pointer">Baja</div>
+                  </label>
+                  <label class="flex-1">
+                    <input type="radio" name="prioridad" value="media" class="peer sr-only">
+                    <div class="py-2.5 rounded-lg border border-slate-700 text-center text-xs peer-checked:bg-red-500/20 peer-checked:border-red-500 transition-all cursor-pointer">Media</div>
+                  </label>
+                  <label class="flex-1">
+                    <input type="radio" name="prioridad" value="alta" class="peer sr-only">
+                    <div class="py-2.5 rounded-lg border border-slate-700 text-center text-xs peer-checked:bg-red-500/20 peer-checked:border-red-500 transition-all cursor-pointer">Alta</div>
+                  </label>
+                </div>
+               </div>
             </div>
-          </label> 
-          <label class="flex-1 cursor-pointer"> 
-            <input type="radio" name="prioridad" value="alta" class="peer sr-only">
-            <div class="p-4 rounded-xl border-2 border-slate-600/50 peer-checked:border-red-500 peer-checked:bg-red-500/10 transition-all text-center"><span class="text-2xl">🔴</span>
-              <p class="mt-1 text-sm font-medium text-slate-300">Alta</p>
+
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-2">Descripción *</label> 
+              <textarea id="input-descripcion" required rows="4" class="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-xl text-white outline-none resize-none"></textarea>
             </div>
-          </label>
-         </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-2">Descripción Detallada *</label> 
-          <textarea id="input-descripcion" required rows="5" placeholder="Describe tu sugerencia con el mayor detalle posible..." class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all resize-none"></textarea>
-        </div>
-        <div class="flex gap-4 pt-4">
-          <button type="button" onclick="limpiarFormulario()" class="px-6 py-3 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-700/50 transition-colors font-medium"> Limpiar </button> 
-          <button type="submit" id="submit-btn" class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
-          <span id="submit-btn-text">Enviar Sugerencia</span> </button>
-        </div>
-       </form>
+
+            <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4">
+              <button type="button" onclick="limpiarFormulario()" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-700 text-slate-400 font-medium">Limpiar</button> 
+              <button type="submit" class="w-full sm:flex-1 px-6 py-3 bg-emerald-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20">Enviar Sugerencia</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Listado Adaptado -->
+        <section id="section-listado" class="hidden fade-in">
+          <!-- Contenedor de cabecera: Columna en móvil, Fila en escritorio -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <h2 class="text-2xl font-bold text-white">Mis Sugerencias</h2>
+            
+            <!-- Contenedor de filtros: Se apilan en móvil (flex-col), se alinean en escritorio (sm:flex-row) -->
+            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              
+              <select id="filter-estado" 
+                      onchange="aplicarFiltros()" 
+                      class="w-full sm:w-44 px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all cursor-pointer">
+                <option value="">Todos los estados</option> 
+                <option value="pendiente">Pendiente</option> 
+                <option value="en_revision">En Revisión</option> 
+                <option value="aprobada">Aprobada</option> 
+                <option value="rechazada">Rechazada</option> 
+              </select>
+
+              <select id="filter-categoria" 
+                      onchange="aplicarFiltros()" 
+                      class="w-full sm:w-44 px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all cursor-pointer">
+                <option value="">Todas las categorías</option> 
+                <option value="infraestructura">Infraestructura</option> 
+                <option value="servicios">Servicios Públicos</option> 
+                <option value="seguridad">Seguridad</option> 
+                <option value="educacion">Educación</option> 
+                <option value="salud">Salud</option> 
+                <option value="medioambiente">Medio Ambiente</option> 
+                <option value="cultura">Cultura y Recreación</option> 
+                <option value="transporte">Transporte</option> 
+                <option value="otro">Otro</option> 
+              </select>
+              
+            </div>
+          </div>
+
+          <!-- Lista de resultados -->
+          <div id="suggestions-list" class="grid grid-cols-1 gap-4">
+            <!-- Render dinámico aquí -->
+          </div>
+        </section>
+
       </div>
-     </section>
-     <!-- Listado Section -->
-     <section id="section-listado" class="hidden fade-in">
-      <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-       <div>
-        <h2 class="text-3xl font-bold text-white mb-2">Mis Sugerencias</h2>
-        <p class="text-slate-400">Revisa el estado y progreso de tus sugerencias</p>
-       </div>
-       <div class="flex gap-3">
-        <select id="filter-estado" onchange="aplicarFiltros()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"> 
-          <option value="">Todos los estados</option> 
-          <option value="pendiente">Pendiente</option> 
-          <option value="en_revision">En Revisión</option> 
-          <option value="aprobada">Aprobada</option> 
-          <option value="rechazada">Rechazada</option> 
-        </select> 
-        <select id="filter-categoria" onchange="aplicarFiltros()" class="px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"> 
-          <option value="">Todas las categorías</option> 
-          <option value="infraestructura">Infraestructura</option> 
-          <option value="servicios">Servicios Públicos</option> 
-          <option value="seguridad">Seguridad</option> 
-          <option value="educacion">Educación</option> 
-          <option value="salud">Salud</option> 
-          <option value="medioambiente">Medio Ambiente</option> 
-          <option value="cultura">Cultura y Recreación</option> 
-          <option value="transporte">Transporte</option> 
-          <option value="otro">Otro</option> 
-        </select>
-       </div>
-      </div>
-      <div id="suggestions-list" class="space-y-4">
-       <div class="text-center py-16 text-slate-500">
-        <svg class="w-20 h-20 mx-auto mb-4 text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-        </svg>
-        <p class="text-lg font-medium">No hay sugerencias aún</p>
-        <p class="text-sm mt-1">Comienza enviando tu primera sugerencia</p>
-        <button onclick="mostrarSeccion('nueva')" class="mt-4 px-6 py-2 bg-emerald-500/20 text-emerald-400 rounded-xl hover:bg-emerald-500/30 transition-colors font-medium"> Crear Sugerencia </button>
-       </div>
-      </div>
-    </div>
-   </main><!-- Toast Container -->
-   <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Logout Modal -->
-   <div id="logout-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    </main>
+
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <div id="logout-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-slate-800 rounded-2xl border border-slate-700 p-6 max-w-sm w-full">
      <div class="text-center">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -372,6 +369,34 @@
     </div>
    </div>
   </div>
+
+
+
+  <script>
+    function toggleMenu() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      const iconPath = document.getElementById('menu-icon-path');
+      const isHidden = sidebar.classList.contains('-translate-x-full');
+
+      if (isHidden) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        iconPath.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+        iconPath.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+      }
+    }
+
+    // Cerrar menú al clickear un item en móvil
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth < 768) toggleMenu();
+      });
+    });
+  </script>
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
@@ -418,13 +443,7 @@
       abr_rep.textContent = usuario.usuario.nombre.trim().split(" ").filter(palabra => palabra.length > 0).map(palabra => palabra[0].toUpperCase()).join("");
       nombre_rep.textContent = usuario.usuario.nombre
 
-      // MENU
-      const btnMenu = document.getElementById("boton-menu");
-      const sidebar = document.getElementById("sidebar");
-
-      btnMenu.addEventListener("click", () => {
-        sidebar.classList.toggle("-translate-x-full");
-      });
+      
 
 
       // 📥 Cargar sugerencias
@@ -708,6 +727,27 @@
       } else {
         document.body.classList.remove('light-theme');
       }
+    }
+
+    // Actualiza el botón del tema en la UI
+    function actualizarBotonTema() {
+      const iconoTema = document.getElementById('theme-icon');
+      const textoTema = document.getElementById('theme-text');
+      if (temaActual === 'light') {
+        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+        textoTema.textContent = 'Tema Oscuro';
+      } else {
+        iconoTema.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1m-16 0H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
+        textoTema.textContent = 'Tema Claro';
+      }
+    }
+
+    // Restaurar tema guardado del almacenamiento local
+    const temaBuscado = localStorage.getItem('adminTema');
+    if (temaBuscado) {
+      temaActual = temaBuscado;
+      aplicarTema();
+      actualizarBotonTema();
     }
 
     
